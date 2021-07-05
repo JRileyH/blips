@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Game.gd" type="Script" id=1]
+[ext_resource path="res://Inspectables/Planet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Inspector.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Inspectables/Blip.tscn" type="PackedScene" id=4]
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Planet" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1644.7, 872.763 )
+
+[node name="Blip" parent="Planet" instance=ExtResource( 4 )]
+
+[node name="Blip2" parent="Planet" instance=ExtResource( 4 )]
+
+[node name="Blip3" parent="Planet" instance=ExtResource( 4 )]
+
+[node name="Planet2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 237.376, 230.423 )
+
+[node name="Blip" parent="Planet2" instance=ExtResource( 4 )]
+
+[node name="Blip2" parent="Planet2" instance=ExtResource( 4 )]
+
+[node name="Inspector" parent="." instance=ExtResource( 3 )]
+position = Vector2( 963, 540 )
