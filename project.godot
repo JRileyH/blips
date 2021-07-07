@@ -18,10 +18,16 @@ _global_script_classes=[ {
 "class": "Inspectable",
 "language": "GDScript",
 "path": "res://Inspectables/Inspectable.gd"
+}, {
+"base": "Inspectable",
+"class": "Planet",
+"language": "GDScript",
+"path": "res://Inspectables/Planet.gd"
 } ]
 _global_script_class_icons={
 "Blip": "",
-"Inspectable": ""
+"Inspectable": "",
+"Planet": ""
 }
 
 [application]
