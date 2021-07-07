@@ -13,9 +13,7 @@ func get_distance() -> float:
 
 func set_velocity():
 	var i = (get_distance()-distance_range[0])/(distance_range[1]-distance_range[0])
-	print(i)
 	velocity = lerp(velocity_range[1], velocity_range[0], i)
-	print(velocity)
 
 func _ready():
 	randomize()
