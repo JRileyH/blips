@@ -12,12 +12,12 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Blip",
 "language": "GDScript",
-"path": "res://Things/Blip.gd"
+"path": "res://Blip.gd"
 }, {
 "base": "Node2D",
 "class": "Bloid",
 "language": "GDScript",
-"path": "res://Things/Bloid.gd"
+"path": "res://Bloid.gd"
 } ]
 _global_script_class_icons={
 "Blip": "",

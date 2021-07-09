@@ -1,45 +1,13 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
-[ext_resource path="res://Things/Bloid.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Map.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Inspector.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Things/Blip.tscn" type="PackedScene" id=4]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Planet" parent="." instance=ExtResource( 2 )]
-position = Vector2( 391.786, 760.04 )
-
-[node name="Blip" parent="Planet" instance=ExtResource( 4 )]
-position = Vector2( 169.5, 44.5 )
-
-[node name="Blip2" parent="Planet" instance=ExtResource( 4 )]
-position = Vector2( 88.5, -118 )
-
-[node name="Blip3" parent="Planet" instance=ExtResource( 4 )]
-position = Vector2( -166, 124.5 )
-
-[node name="Planet2" parent="." instance=ExtResource( 2 )]
-position = Vector2( 1494.07, 255.018 )
-
-[node name="Blip" parent="Planet2" instance=ExtResource( 4 )]
-position = Vector2( -145, -32 )
-
-[node name="Blip2" parent="Planet2" instance=ExtResource( 4 )]
-position = Vector2( 202.5, 27.5 )
-
-[node name="Planet3" parent="." instance=ExtResource( 2 )]
-position = Vector2( 1305, 786.5 )
-
-[node name="Blip" parent="Planet3" instance=ExtResource( 4 )]
-position = Vector2( 157, -75.5 )
-
-[node name="Blip2" parent="Planet3" instance=ExtResource( 4 )]
-position = Vector2( -104, 103 )
-
-[node name="Blip3" parent="Planet3" instance=ExtResource( 4 )]
-position = Vector2( 226.5, 109 )
-
 [node name="Inspector" parent="." instance=ExtResource( 3 )]
 position = Vector2( 963, 540 )
+
+[node name="Map" parent="." instance=ExtResource( 2 )]
