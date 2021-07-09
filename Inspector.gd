@@ -23,7 +23,9 @@ func _ready():
 
 func _process(delta):
 	position += get_move_input() * delta * 500
+	"""
 	if Input.is_action_pressed("reset"):
 		rotation = 0.0
 	else:
 		rotation += get_rotation_input() * delta
+	"""

@@ -4,37 +4,36 @@ class_name Blip
 var target: Inspectable = null
 var angular_velocity: float = 0.0
 var linear_velocity: Vector2 = Vector2.ZERO
+var radius: float = 120.0
 
+func set_distance(amt: float):
+	if not target:
+		return
+	$BlipBody.position.x += amt
 
 func attach(trg: Inspectable):
 	if target:
 		return
 	$BlipBody.color = Color(0, 1, 0)
-	print("Attach")
 	target = trg
 	var angle = global_position.angle_to_point(target.global_position)
 	var distance = global_position.distance_to(target.global_position)
 	global_position = target.global_position
 	$BlipBody.position.x = distance
 	rotation = angle
-	print(angle)
-	# convert linear_velocity into angular_velocity 
+	angular_velocity = linear_velocity.length() / distance
 
 func detach():
 	if not target:
 		return
 	$BlipBody.color = Color(1, 0, 0)
-	print("Detach")
-	var angle = rotation
-	var distance = $BlipBody.position.x
+	var new_position = $BlipBody.global_position
 	rotation = 0
 	$BlipBody.position.x = 0
-	global_position = target.global_position + Vector2(
-		distance * sin(angle),
-		distance * cos(angle)
-	)
-	print(angle)
-	# convert angular_velocity into linear_velocity
+	global_position = new_position
+	var angle = global_position.angle_to_point(target.global_position)
+	var distance = global_position.distance_to(target.global_position)
+	linear_velocity = Vector2.DOWN.rotated(angle) * (angular_velocity * distance)
 	target = null
 
 func _ready():
@@ -44,7 +43,4 @@ func _process(delta):
 	if target:
 		rotation += (angular_velocity * delta)
 	else:
-		pass
-
-func _draw():
-	draw_circle(Vector2.ZERO, 2, Color(0, 0, 1))
+		global_position += (linear_velocity * delta)
