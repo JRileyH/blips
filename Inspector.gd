@@ -1,7 +1,6 @@
 extends Node2D
 
 var direction: Vector2 = Vector2.ZERO
-var target = null
 
 func get_move_input() -> Vector2:
 	direction = Vector2.ZERO

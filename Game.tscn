@@ -9,10 +9,16 @@
 script = ExtResource( 1 )
 
 [node name="Planet" parent="." instance=ExtResource( 2 )]
-position = Vector2( 666.7, 532.763 )
+position = Vector2( 392.786, 541.04 )
 
 [node name="Blip" parent="Planet" instance=ExtResource( 4 )]
-position = Vector2( -114, -110 )
+position = Vector2( 150, 0 )
+
+[node name="Blip2" parent="Planet" instance=ExtResource( 4 )]
+position = Vector2( 120, 0 )
+
+[node name="Planet2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1190.57, 413.518 )
 
 [node name="Inspector" parent="." instance=ExtResource( 3 )]
 position = Vector2( 963, 540 )
