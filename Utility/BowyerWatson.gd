@@ -1,6 +1,8 @@
 extends Resource
 class_name BowyerWatson
 
+const SQRT3: float = 1.73205080757
+
 class Line:
 	var _p1: Vector2
 	var _p2: Vector2
@@ -68,12 +70,16 @@ class Triangle:
 	func _to_string():
 		return "(%s, %s), (%s, %s), (%s, %s)" % [_p1.x, _p1.y, _p2.x, _p2.y, _p3.x, _p3.y]
 
-static func _find_super_triangle(points: PoolVector2Array) -> Triangle:
-	return Triangle.new(Vector2(-20000, -5000), Vector2(20000, -5000), Vector2(2500, 20000)) 
+static func min_inscribed_triangle(radius: float, origin: Vector2 = Vector2.ZERO) -> Triangle:
+	var edge = (6*radius)/SQRT3
+	var a = Vector2(origin.x, origin.y + (edge*SQRT3)/3)
+	var b = Vector2(origin.x - (edge/2), origin.y - radius)
+	var c = Vector2(origin.x + (edge/2), origin.y - radius)
+	
+	return Triangle.new(a, b, c) 
 
-static func triangulate(points: PoolVector2Array) -> Array:
-	var super_triangle = _find_super_triangle(points)
-	var triangles: Array = [super_triangle]
+static func triangulate(super: Triangle, points: PoolVector2Array) -> Array:
+	var triangles: Array = [super]
 	for point in points:
 		var bad_triangles: Array = []
 		for triangle in triangles:
@@ -97,7 +103,7 @@ static func triangulate(points: PoolVector2Array) -> Array:
 	var doomed_triangles: Array = []
 	for triangle in triangles:
 		for point in triangle.points():
-			if super_triangle.has_vertex(point):
+			if super.has_vertex(point):
 				doomed_triangles.append(triangle)
 				break
 	for triangle in doomed_triangles:
