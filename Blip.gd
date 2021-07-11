@@ -38,6 +38,10 @@ func attach(trg: Bloid):
 	emit_signal("attach", trg)
 	target = null
 	orbit = trg
+	var parent = get_parent()
+	if parent:
+		parent.remove_child(self)
+	orbit.add_child(self)
 	var angle = global_position.angle_to_point(orbit.global_position)
 	var distance = global_position.distance_to(orbit.global_position)
 	global_position = orbit.global_position

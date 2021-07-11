@@ -18,10 +18,16 @@ _global_script_classes=[ {
 "class": "Bloid",
 "language": "GDScript",
 "path": "res://Bloid.gd"
+}, {
+"base": "Resource",
+"class": "BowyerWatson",
+"language": "GDScript",
+"path": "res://Utility/BowyerWatson.gd"
 } ]
 _global_script_class_icons={
 "Blip": "",
-"Bloid": ""
+"Bloid": "",
+"BowyerWatson": ""
 }
 
 [application]

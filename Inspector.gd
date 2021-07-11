@@ -21,7 +21,7 @@ func _ready():
 	pass
 
 func _process(delta):
-	position += get_move_input() * delta * 500
+	position += get_move_input() * delta * 900
 	if Input.is_action_pressed("reset"):
 		rotation = 0.0
 	else:
@@ -30,6 +30,6 @@ func _process(delta):
 func _input(event):
 	if event is InputEventPanGesture:
 		var new_zoom = $Camera2D.zoom + Vector2(event.delta.y, event.delta.y).normalized() * 0.2
-		if new_zoom.y <= 1 or new_zoom.y >= 10:
+		if new_zoom.y <= 0.1 or new_zoom.y >= 50:
 			return
 		$Camera2D.zoom = new_zoom
