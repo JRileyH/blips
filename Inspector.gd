@@ -18,7 +18,7 @@ func get_rotation_input() -> float:
 	return r
 
 func _ready():
-	pass
+	$Camera2D.zoom = Vector2.ONE * 7.0
 
 func _process(delta):
 	position += get_move_input() * delta * 900

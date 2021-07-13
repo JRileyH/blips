@@ -3,7 +3,7 @@ extends Node2D
 const BLIP_VELOCITY: float = 100.0
 const MAP_SIZE: int = 3000
 const BLOID_DENSITY: float = 0.01
-const MAX_BLIPS: int = 0
+const MAX_BLIPS: int = 10
 
 var Bloid = preload("res://Bloid.tscn")
 var Blip = preload("res://Blip.tscn")
@@ -42,20 +42,20 @@ func get_random_blip_position() -> Vector2:
 
 func create_blip(parent: Bloid, relative_pos: Vector2) -> Blip:
 	var new_blip = Blip.instance()
-	# parent.add_child(new_blip)
+	parent.add_child(new_blip)
+	blips.append(new_blip)
 	new_blip.global_position = parent.global_position + relative_pos
 	new_blip.linear_velocity = BLIP_VELOCITY
-	blips.append(new_blip)
 	new_blip.attach(parent)
 	return new_blip
 
-func create_bloid(global_pos: Vector2, blips: PoolVector2Array = []) -> Bloid:
+func create_bloid(global_pos: Vector2, blip_coords: PoolVector2Array = []) -> Bloid:
 	var new_bloid = Bloid.instance()
-	new_bloid.global_position = global_pos
-	bloids.append(new_bloid)
-	for blip_pos in blips:
-		create_blip(new_bloid, blip_pos)
 	add_child(new_bloid)
+	bloids.append(new_bloid)
+	new_bloid.global_position = global_pos
+	for blip_pos in blip_coords:
+		create_blip(new_bloid, blip_pos)
 	return new_bloid
 
 func create_random_bloid(max_radius: float = MAP_SIZE, origin: Vector2 = Vector2.ZERO) -> Bloid:
@@ -68,13 +68,17 @@ func create_random_bloid(max_radius: float = MAP_SIZE, origin: Vector2 = Vector2
 	return create_bloid(random_position, blip_data)
 
 var triangles: Array
+var lines: Array
 func _ready():
-	var bloid_points: PoolVector2Array
+	var bloid_points: PoolVector2Array = []
 	for i in round(MAP_SIZE * BLOID_DENSITY):
 		bloid_points.append(create_random_bloid().global_position)
-	var super_triangle: BowyerWatson.Triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
+	var super_triangle: Geom.Triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
 	triangles = BowyerWatson.triangulate(super_triangle, bloid_points)
+	lines = MinimalSpanningTree.find(bloid_points)
 
 func _draw():
 	for t in triangles:
 		t.draw(self)
+	for l in lines:
+		l.draw(self)

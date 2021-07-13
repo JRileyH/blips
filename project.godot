@@ -23,11 +23,23 @@ _global_script_classes=[ {
 "class": "BowyerWatson",
 "language": "GDScript",
 "path": "res://Utility/BowyerWatson.gd"
+}, {
+"base": "Resource",
+"class": "Geom",
+"language": "GDScript",
+"path": "res://Utility/Geom.gd"
+}, {
+"base": "Resource",
+"class": "MinimalSpanningTree",
+"language": "GDScript",
+"path": "res://Utility/MinimalSpanningTree.gd"
 } ]
 _global_script_class_icons={
 "Blip": "",
 "Bloid": "",
-"BowyerWatson": ""
+"BowyerWatson": "",
+"Geom": "",
+"MinimalSpanningTree": ""
 }
 
 [application]
@@ -36,6 +48,10 @@ config/name="blips"
 run/main_scene="res://Game.tscn"
 boot_splash/bg_color=Color( 0.901961, 0.901961, 0.901961, 1 )
 config/icon="res://icon.png"
+
+[debug]
+
+gdscript/warnings/return_value_discarded=false
 
 [display]
 

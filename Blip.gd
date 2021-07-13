@@ -39,9 +39,10 @@ func attach(trg: Bloid):
 	target = null
 	orbit = trg
 	var parent = get_parent()
-	if parent:
-		parent.remove_child(self)
-	orbit.add_child(self)
+	if parent != orbit:
+		if parent:
+			parent.remove_child(self)
+		orbit.add_child(self)
 	var angle = global_position.angle_to_point(orbit.global_position)
 	var distance = global_position.distance_to(orbit.global_position)
 	global_position = orbit.global_position
@@ -64,9 +65,7 @@ func detach():
 	orbit = null
 
 func _ready():
-	var trg = get_parent()
-	linear_velocity = global_position.distance_to(trg.global_position)
-	attach(trg)
+	pass
 
 func _process(delta):
 	if orbit:
