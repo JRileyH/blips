@@ -1,9 +1,10 @@
 extends Node2D
 
 const BLIP_VELOCITY: float = 100.0
-const MAP_SIZE: int = 3000
+const MAP_SIZE: int = 4000
 const BLOID_DENSITY: float = 0.01
 const MAX_BLIPS: int = 10
+const CONNECTIVITY: float = 0.25
 
 var Bloid = preload("res://Bloid.tscn")
 var Blip = preload("res://Blip.tscn")
@@ -18,8 +19,6 @@ func _bloid_too_close(point: Vector2) -> bool:
 	return false
 
 func _get_random_point(radius: float, origin: Vector2, retry: int = 0) -> Vector2:
-	if retry > 10:
-		return Vector2.ZERO
 	randomize()
 	var angle = rand_range(0, PI*2)
 	var distance = rand_range(-radius, radius)
@@ -27,7 +26,9 @@ func _get_random_point(radius: float, origin: Vector2, retry: int = 0) -> Vector
 		cos(angle) * distance,
 		sin(angle) * distance
 	) + origin
-	while _bloid_too_close(point) and point != Vector2.ZERO:
+	if retry > 10:
+		return point
+	if _bloid_too_close(point):
 		point = _get_random_point(radius, origin, retry + 1)
 	return point
 
@@ -67,18 +68,88 @@ func create_random_bloid(max_radius: float = MAP_SIZE, origin: Vector2 = Vector2
 		
 	return create_bloid(random_position, blip_data)
 
-var triangles: Array
-var lines: Array
-func _ready():
+var connections: Array = []
+
+func build():
+	# RESET WORLD
+	for blip in blips:
+		blip.queue_free()
+	blips = []
+	for bloid in bloids:
+		bloid.queue_free()
+	bloids = []
+	connections = []
+
+	# PLACE BLOIDS
 	var bloid_points: PoolVector2Array = []
 	for i in round(MAP_SIZE * BLOID_DENSITY):
 		bloid_points.append(create_random_bloid().global_position)
-	var super_triangle: Geom.Triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
-	triangles = BowyerWatson.triangulate(super_triangle, bloid_points)
-	lines = MinimalSpanningTree.find(bloid_points)
+
+	# GENERATE DEULANCY TRIANGULATION
+	var super_triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
+	var triangulation = BowyerWatson.triangulate_lines(super_triangle, bloid_points)
+	
+	# GENERATE MINIMAL SPANNING TREE
+	var minimal_span = MinimalSpanningTree.find(bloid_points)
+	
+	# GENERATE EXTRA CONNECTIONS
+	var EXTRA_SIZE: int = floor((triangulation.size() - minimal_span.size()) * CONNECTIVITY)
+	
+	# FIRST HALF IS THE LOWEST SPANNING CONNECTIONS
+	var lowest_extras = []
+	var largest_extra: Geom.Line = triangulation[0]
+	for line in triangulation:
+		var already_used: bool = false
+		for l in minimal_span:
+			if l.equals(line):
+				already_used = true
+				continue
+		if already_used:
+			continue
+		if lowest_extras.size() < floor(EXTRA_SIZE / 2):
+			lowest_extras.append(line)
+			if line.length() > largest_extra.length():
+				largest_extra = line
+		else:
+			if line.length() < largest_extra.length():
+				lowest_extras.erase(largest_extra)
+				lowest_extras.append(line)
+				largest_extra = lowest_extras[0]
+				for l in lowest_extras:
+					if l.length() > largest_extra.length():
+						largest_extra = l
+	
+	# SECOND HALF IS RANDOMLY SELECTED
+	var random_extras = []
+	while random_extras.size() < floor(EXTRA_SIZE / 2):
+		randomize()
+		var connection = triangulation[randi() % triangulation.size()]
+		for line in minimal_span:
+			if line.equals(connection):
+				triangulation.erase(connection)
+				continue
+		for line in lowest_extras:
+			if line.equals(connection):
+				triangulation.erase(connection)
+				continue
+		random_extras.append(connection)
+	
+	connections = minimal_span + lowest_extras + random_extras
+	update()
+
+func _ready():
+	build()
+
+var timer: float = 0.0
+func _process(delta):
+	timer += delta
+	if timer > 3:
+		timer = 0.0
+		build()
+	
 
 func _draw():
-	for t in triangles:
-		t.draw(self)
-	for l in lines:
-		l.draw(self)
+	for c in connections:
+		c.draw(self)
+
+	

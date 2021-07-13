@@ -11,6 +11,12 @@ static func min_inscribed_triangle(radius: float, origin: Vector2 = Vector2.ZERO
 	
 	return Geom.Triangle.new(a, b, c)
 
+static func triangulate_lines(super: Geom.Triangle, points: PoolVector2Array) -> Array:
+	var lines: Array = []
+	for triangle in triangulate(super, points):
+		lines += triangle.edges()
+	return lines
+
 static func triangulate(super: Geom.Triangle, points: PoolVector2Array) -> Array:
 	var triangles: Array = [super]
 	for point in points:
