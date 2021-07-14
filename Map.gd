@@ -5,7 +5,7 @@ var MAP_SIZE: int = 4000
 var BLOID_DENSITY: float = 0.01
 var CONNECTIVITY: float = 0.25
 var RANDOMNESS: float = 0.5
-var MAX_BLIPS: int = 10
+var MAX_BLIPS: int = 5
 
 
 var Bloid = preload("res://Bloid.tscn")
@@ -160,16 +160,9 @@ func build():
 func _ready():
 	build()
 
-var timer: float = 0.0
-func _process(delta):
-	timer += delta
-	if timer > 3:
-		timer = 0.0
-		build()
-	
+func _process(_delta):
+	pass
 
 func _draw():
 	for c in connections:
 		c.draw(self)
-
-	

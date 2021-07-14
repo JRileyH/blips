@@ -22,9 +22,13 @@ func _ready():
 	var map = get_node("../Map")
 	$CanvasLayer/Control/Panel/Radius.connect("change", map, "set_map_size")
 	$CanvasLayer/Control/Panel/Density.connect("change", map, "set_bloid_density")
+	$CanvasLayer/Control/Panel/Connectivity.connect("change", map, "set_connectivity")
+	$CanvasLayer/Control/Panel/Randomness.connect("change", map, "set_randomness")
+	$CanvasLayer/Control/Panel/MaxBlips.connect("change", map, "set_max_blips")
+	$CanvasLayer/Control/Panel/Rebuild.connect("pressed", map, "build")
 
 func _process(delta):
-	position += get_move_input() * delta * 900
+	position += get_move_input() * delta * 1500
 	if Input.is_action_pressed("reset"):
 		rotation = 0.0
 	else:
@@ -36,3 +40,21 @@ func _input(event):
 		if new_zoom.y <= 0.1 or new_zoom.y >= 50:
 			return
 		$Camera2D.zoom = new_zoom
+	elif event is InputEventMouseButton:
+		if event.is_pressed() and (event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN):
+			var new_zoom = $Camera2D.zoom
+			if event.button_index == BUTTON_WHEEL_UP:
+				new_zoom += Vector2.ONE * 0.5
+			elif event.button_index == BUTTON_WHEEL_DOWN:
+				new_zoom -= Vector2.ONE * 0.5
+			if new_zoom != $Camera2D.zoom and new_zoom.y > 0.1 and new_zoom.y < 50:
+				$Camera2D.zoom = new_zoom
+	elif event is InputEventKey:
+		if event.is_pressed() and (event.scancode == KEY_BRACELEFT or event.scancode == KEY_BRACERIGHT):
+			var new_zoom = $Camera2D.zoom
+			if event.scancode == KEY_BRACELEFT:
+				new_zoom += Vector2.ONE
+			elif event.scancode == KEY_BRACERIGHT:
+				new_zoom -= Vector2.ONE
+			if new_zoom != $Camera2D.zoom and new_zoom.y > 0.1 and new_zoom.y < 50:
+				$Camera2D.zoom = new_zoom

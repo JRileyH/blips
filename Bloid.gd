@@ -1,7 +1,7 @@
 extends Node2D
 class_name Bloid
 
-export (float) var radius = 80.0
+export (float) var radius = 40.0
 export(Color) var color = Color(0.6, 0.6, 0.6)
 
 func _ready():

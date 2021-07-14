@@ -29,7 +29,7 @@ anchor_right = 1.0
 margin_left = -240.0
 margin_top = 20.0
 margin_right = -20.0
-margin_bottom = 620.0
+margin_bottom = 320.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -66,3 +66,37 @@ minimum = 0.01
 maximum = 0.5
 step = 0.01
 default = 0.1
+
+[node name="Connectivity" parent="CanvasLayer/Control/Panel" instance=ExtResource( 3 )]
+margin_left = 2.0
+margin_top = 118.0
+margin_right = 218.0
+margin_bottom = 156.0
+label = "Connectivity"
+maximum = 1.0
+step = 0.01
+default = 0.25
+
+[node name="Randomness" parent="CanvasLayer/Control/Panel" instance=ExtResource( 3 )]
+margin_left = 2.0
+margin_top = 156.0
+margin_right = 218.0
+margin_bottom = 194.0
+label = "Randomness"
+maximum = 1.0
+step = 0.01
+default = 0.5
+
+[node name="MaxBlips" parent="CanvasLayer/Control/Panel" instance=ExtResource( 3 )]
+margin_left = 2.0
+margin_top = 194.0
+margin_right = 218.0
+margin_bottom = 232.0
+label = "Max Blips"
+
+[node name="Rebuild" type="Button" parent="CanvasLayer/Control/Panel"]
+margin_left = 80.0
+margin_top = 249.75
+margin_right = 140.0
+margin_bottom = 269.75
+text = "Rebuild"
