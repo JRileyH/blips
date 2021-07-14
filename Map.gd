@@ -1,16 +1,33 @@
 extends Node2D
 
 const BLIP_VELOCITY: float = 100.0
-const MAP_SIZE: int = 4000
-const BLOID_DENSITY: float = 0.01
-const MAX_BLIPS: int = 10
-const CONNECTIVITY: float = 0.25
+var MAP_SIZE: int = 4000
+var BLOID_DENSITY: float = 0.01
+var CONNECTIVITY: float = 0.25
+var RANDOMNESS: float = 0.5
+var MAX_BLIPS: int = 10
+
 
 var Bloid = preload("res://Bloid.tscn")
 var Blip = preload("res://Blip.tscn")
 
 var bloids: Array = []
 var blips: Array = []
+
+func set_map_size(value):
+	MAP_SIZE = value
+
+func set_bloid_density(value):
+	BLOID_DENSITY = value * 0.1
+
+func set_connectivity(value):
+	CONNECTIVITY = value
+
+func set_randomness(value):
+	RANDOMNESS = value
+
+func set_max_blips(value):
+	MAX_BLIPS = value
 
 func _bloid_too_close(point: Vector2) -> bool:
 	for bloid in bloids:
@@ -92,10 +109,13 @@ func build():
 	# GENERATE MINIMAL SPANNING TREE
 	var minimal_span = MinimalSpanningTree.find(bloid_points)
 	
+	if triangulation.size() == 0:
+		return minimal_span
+	
 	# GENERATE EXTRA CONNECTIONS
 	var EXTRA_SIZE: int = floor((triangulation.size() - minimal_span.size()) * CONNECTIVITY)
 	
-	# FIRST HALF IS THE LOWEST SPANNING CONNECTIONS
+	# FIRST PART IS THE LOWEST SPANNING CONNECTIONS
 	var lowest_extras = []
 	var largest_extra: Geom.Line = triangulation[0]
 	for line in triangulation:
@@ -106,7 +126,7 @@ func build():
 				continue
 		if already_used:
 			continue
-		if lowest_extras.size() < floor(EXTRA_SIZE / 2):
+		if lowest_extras.size() < floor(EXTRA_SIZE * (1 - RANDOMNESS)):
 			lowest_extras.append(line)
 			if line.length() > largest_extra.length():
 				largest_extra = line
@@ -119,9 +139,9 @@ func build():
 					if l.length() > largest_extra.length():
 						largest_extra = l
 	
-	# SECOND HALF IS RANDOMLY SELECTED
+	# REST IS SELECTED RANDOMLY
 	var random_extras = []
-	while random_extras.size() < floor(EXTRA_SIZE / 2):
+	while random_extras.size() < floor(EXTRA_SIZE * RANDOMNESS):
 		randomize()
 		var connection = triangulation[randi() % triangulation.size()]
 		for line in minimal_span:

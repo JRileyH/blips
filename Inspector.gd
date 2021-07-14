@@ -19,6 +19,9 @@ func get_rotation_input() -> float:
 
 func _ready():
 	$Camera2D.zoom = Vector2.ONE * 7.0
+	var map = get_node("../Map")
+	$CanvasLayer/Control/Panel/Radius.connect("change", map, "set_map_size")
+	$CanvasLayer/Control/Panel/Density.connect("change", map, "set_bloid_density")
 
 func _process(delta):
 	position += get_move_input() * delta * 900
