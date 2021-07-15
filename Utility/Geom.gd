@@ -9,6 +9,9 @@ class Line:
 		_p1 = p1
 		_p2 = p2
 	
+	func points() -> Array:
+		return [_p1, _p2]
+	
 	func length() -> float:
 		return _p1.distance_to(_p2)
 	

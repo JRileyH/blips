@@ -11,6 +11,7 @@ var MAX_BLIPS: int = 5
 var Bloid = preload("res://Bloid.tscn")
 var Blip = preload("res://Blip.tscn")
 
+var selected_bloid = null
 var bloids: Array = []
 var blips: Array = []
 
@@ -93,14 +94,19 @@ func build():
 		blip.queue_free()
 	blips = []
 	for bloid in bloids:
+		bloid.disconnect("selected", self, "handle_select_bloid")
 		bloid.queue_free()
 	bloids = []
 	connections = []
 
 	# PLACE BLOIDS
 	var bloid_points: PoolVector2Array = []
+	var bloid_map: Dictionary = {}
 	for i in round(MAP_SIZE * BLOID_DENSITY):
-		bloid_points.append(create_random_bloid().global_position)
+		var new_bloid = create_random_bloid()
+		bloid_map[new_bloid.global_position] = new_bloid
+		bloid_points.append(new_bloid.global_position)
+		new_bloid.connect("selected", self, "handle_select_bloid")
 
 	# GENERATE DEULANCY TRIANGULATION
 	var super_triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
@@ -155,13 +161,35 @@ func build():
 		random_extras.append(connection)
 	
 	connections = minimal_span + lowest_extras + random_extras
+	
+	for line in connections:
+		var bloid1 = bloid_map[line.points()[0]]
+		var bloid2 = bloid_map[line.points()[1]]
+		if bloid1 and bloid2:
+			bloid1.add_neighbor(bloid2)
+			bloid2.add_neighbor(bloid1)
+	
 	update()
+
+func handle_select_bloid(bloid: Bloid):
+	if not selected_bloid:
+		selected_bloid = bloid
+		selected_bloid.set_color(Color(0.1, 0.8, 0.4))
+	else:
+		if selected_bloid.blips.size() > 0:
+			var blip = selected_bloid.blips[0]
+			blip.set_target(bloid)
+		selected_bloid.set_color(Color(0.6, 0.6, 0.6))
+		selected_bloid = null
+	
 
 func _ready():
 	build()
 
-func _process(_delta):
-	pass
+func _input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
+		for bloid in bloids:
+			bloid.set_color()
 
 func _draw():
 	for c in connections:

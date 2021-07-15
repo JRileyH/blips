@@ -9,6 +9,7 @@ var linear_direction: Vector2
 
 var traveling: bool = false
 var approach_timer: float = 0.0
+var random_distance: float = 300.0
 
 signal attach
 signal detach
@@ -31,11 +32,15 @@ func set_target(trg: Bloid):
 	detach()
 	traveling = true
 	target = trg
+	randomize()
+	random_distance = rand_range(100, 300)
 
 func attach(trg: Bloid):
 	if orbit:
 		return
 	emit_signal("attach", trg)
+	var angle = global_position.angle_to_point(trg.global_position)
+	var distance = global_position.distance_to(trg.global_position)
 	target = null
 	orbit = trg
 	var parent = get_parent()
@@ -43,8 +48,7 @@ func attach(trg: Bloid):
 		if parent:
 			parent.remove_child(self)
 		orbit.add_child(self)
-	var angle = global_position.angle_to_point(orbit.global_position)
-	var distance = global_position.distance_to(orbit.global_position)
+	orbit.add_blip(self)
 	global_position = orbit.global_position
 	$BlipBody.position.x = distance
 	rotation = angle
@@ -62,10 +66,12 @@ func detach():
 	global_position = new_position
 	linear_direction = Vector2.DOWN.rotated(angle)
 	linear_velocity =  angular_velocity * distance
+	orbit.remove_blip(self)
 	orbit = null
 
-func _ready():
-	pass
+func set_color(c: Color = Color(0.6, 0.6, 0.6)):
+	$BlipBody.color = c
+	$BlipBody.update()
 
 func _process(delta):
 	if orbit:
@@ -74,7 +80,7 @@ func _process(delta):
 		if target:
 			var angle = global_position.angle_to_point(target.global_position)
 			var distance = global_position.distance_to(target.global_position)
-			if traveling and distance < 300:
+			if traveling and distance < random_distance:
 				traveling = false
 				approach_timer = 0.0
 			if not traveling:
