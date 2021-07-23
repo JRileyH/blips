@@ -33,6 +33,9 @@ func remove_neighbor(neighbor: Bloid):
 	if neighbor in neighbors:
 		neighbors.erase(neighbor)
 
+func distance_to(other: Bloid) -> float:
+	return global_position.distance_to(other.global_position)
+
 func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 	color = c
 	update()

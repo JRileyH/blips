@@ -25,6 +25,11 @@ _global_script_classes=[ {
 "path": "res://Utility/BowyerWatson.gd"
 }, {
 "base": "Resource",
+"class": "Dijkstra",
+"language": "GDScript",
+"path": "res://Utility/Dijkstra.gd"
+}, {
+"base": "Resource",
 "class": "Geom",
 "language": "GDScript",
 "path": "res://Utility/Geom.gd"
@@ -38,6 +43,7 @@ _global_script_class_icons={
 "Blip": "",
 "Bloid": "",
 "BowyerWatson": "",
+"Dijkstra": "",
 "Geom": "",
 "MinimalSpanningTree": ""
 }

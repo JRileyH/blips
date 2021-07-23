@@ -173,14 +173,23 @@ func build():
 
 func handle_select_bloid(bloid: Bloid):
 	if not selected_bloid:
+		for b in bloids:
+			b.set_color(Color(0.6, 0.6, 0.6))
 		selected_bloid = bloid
 		selected_bloid.set_color(Color(0.1, 0.8, 0.4))
 	else:
-		if selected_bloid.blips.size() > 0:
-			var blip = selected_bloid.blips[0]
-			blip.set_target(bloid)
-		selected_bloid.set_color(Color(0.6, 0.6, 0.6))
+		path = Dijkstra.shortest_path(bloids, selected_bloid, bloid)
 		selected_bloid = null
+
+var path: Array = []
+var timer: float = 0.0
+func _process(delta):
+	if path.size() > 0:
+		timer += delta
+		if timer > 0.5:
+			timer = 0.0
+			var b = path.pop_front()
+			b.set_color(Color(0.8, 0.5, 0.4))
 	
 
 func _ready():
