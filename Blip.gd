@@ -6,6 +6,7 @@ var orbit: Bloid = null
 var angular_velocity: float = 0.0
 var linear_velocity: float = 0.0
 var linear_direction: Vector2
+var path: Array = []
 
 var traveling: bool = false
 var approach_timer: float = 0.0
@@ -24,6 +25,9 @@ func set_distance(amt: float):
 
 func shift_distance(amt: float):
 	set_distance($BlipBody.position.x + amt)
+
+func set_path(pth: Array):
+	path = pth
 
 func set_target(trg: Bloid):
 	if orbit and orbit == trg:
@@ -76,6 +80,8 @@ func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 func _process(delta):
 	if orbit:
 		rotation += (angular_velocity * delta)
+		if path.size() > 0:
+			set_target(path.pop_front())
 	else:
 		if target:
 			var angle = global_position.angle_to_point(target.global_position)
