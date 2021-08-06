@@ -15,6 +15,8 @@ var selected_bloid = null
 var bloids: Array = []
 var blips: Array = []
 
+onready var space = $Space
+
 func set_map_size(value):
 	MAP_SIZE = value
 
@@ -70,7 +72,7 @@ func create_blip(parent: Bloid, relative_pos: Vector2) -> Blip:
 
 func create_bloid(global_pos: Vector2, blip_coords: PoolVector2Array = []) -> Bloid:
 	var new_bloid = Bloid.instance()
-	add_child(new_bloid)
+	space.add_child(new_bloid)
 	bloids.append(new_bloid)
 	new_bloid.global_position = global_pos
 	for blip_pos in blip_coords:
@@ -89,6 +91,8 @@ func create_random_bloid(max_radius: float = MAP_SIZE, origin: Vector2 = Vector2
 var connections: Array = []
 
 func build():
+	b = 0
+	$Fog.reset()
 	# RESET WORLD
 	for blip in blips:
 		blip.queue_free()
@@ -177,8 +181,16 @@ func handle_select_bloid(bloid: Bloid):
 		var start = blip.orbit if blip.orbit else blip.target
 		blip.set_path(Dijkstra.shortest_path(bloids, start, bloid))
 
-func _process(_delta):
-	pass
+var timer: float = 0.0
+var b: int = 0
+func _process(delta):
+	timer += delta
+	if timer > 0.1:
+		timer = 0.0
+		if b < bloids.size():
+			$Fog.reveal_bloid(bloids[b])
+			b += 1
+		
 
 func _ready():
 	build()

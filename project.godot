@@ -112,10 +112,15 @@ zoom_out={
  ]
 }
 
+[layer_names]
+
+2d_render/layer_1="World"
+2d_render/layer_2="Lighting"
+2d_render/layer_3="UI"
+
 [rendering]
 
-quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
-environment/default_clear_color=Color( 0.901961, 0.901961, 0.901961, 1 )
+environment/default_clear_color=Color( 0.0117647, 0.0470588, 0.180392, 1 )
 environment/default_environment="res://default_env.tres"
