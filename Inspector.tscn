@@ -17,6 +17,7 @@ script = ExtResource( 2 )
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="CanvasLayer"]
+visible = false
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -1920.0
@@ -88,13 +89,6 @@ label = "Randomness"
 maximum = 1.0
 step = 0.01
 default = 0.5
-
-[node name="MaxBlips" parent="CanvasLayer/Control/Panel" instance=ExtResource( 3 )]
-margin_left = 2.0
-margin_top = 194.0
-margin_right = 218.0
-margin_bottom = 232.0
-label = "Max Blips"
 
 [node name="Rebuild" type="Button" parent="CanvasLayer/Control/Panel"]
 margin_left = 80.0

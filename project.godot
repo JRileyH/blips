@@ -10,6 +10,16 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Node2D",
+"class": "Action",
+"language": "GDScript",
+"path": "res://Actions/Action.gd"
+}, {
+"base": "Action",
+"class": "AddAction",
+"language": "GDScript",
+"path": "res://Actions/AddAction.gd"
+}, {
+"base": "Node2D",
 "class": "Blip",
 "language": "GDScript",
 "path": "res://Blip.gd"
@@ -38,14 +48,34 @@ _global_script_classes=[ {
 "class": "MinimalSpanningTree",
 "language": "GDScript",
 "path": "res://Utility/MinimalSpanningTree.gd"
+}, {
+"base": "Action",
+"class": "MoveAction",
+"language": "GDScript",
+"path": "res://Actions/MoveAction.gd"
+}, {
+"base": "Action",
+"class": "StandByAction",
+"language": "GDScript",
+"path": "res://Actions/StandByAction.gd"
+}, {
+"base": "Action",
+"class": "UpgradeAction",
+"language": "GDScript",
+"path": "res://Actions/UpgradeAction.gd"
 } ]
 _global_script_class_icons={
+"Action": "",
+"AddAction": "",
 "Blip": "",
 "Bloid": "",
 "BowyerWatson": "",
 "Dijkstra": "",
 "Geom": "",
-"MinimalSpanningTree": ""
+"MinimalSpanningTree": "",
+"MoveAction": "",
+"StandByAction": "",
+"UpgradeAction": ""
 }
 
 [application]
@@ -54,6 +84,10 @@ config/name="blips"
 run/main_scene="res://Game.tscn"
 boot_splash/bg_color=Color( 0.901961, 0.901961, 0.901961, 1 )
 config/icon="res://icon.png"
+
+[autoload]
+
+Music="*res://Music.tscn"
 
 [debug]
 
@@ -112,10 +146,15 @@ zoom_out={
  ]
 }
 
+[layer_names]
+
+2d_render/layer_1="World"
+2d_render/layer_2="Lighting"
+2d_render/layer_3="UI"
+
 [rendering]
 
-quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
-environment/default_clear_color=Color( 0.901961, 0.901961, 0.901961, 1 )
+environment/default_clear_color=Color( 1, 1, 1, 1 )
 environment/default_environment="res://default_env.tres"

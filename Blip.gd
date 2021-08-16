@@ -1,8 +1,8 @@
 extends Node2D
 class_name Blip
 
-var target: Bloid = null
-var orbit: Bloid = null
+var target = null
+var orbit = null
 var angular_velocity: float = 0.0
 var linear_velocity: float = 0.0
 var linear_direction: Vector2
@@ -16,6 +16,11 @@ signal attach
 signal detach
 signal target
 
+var noise = OpenSimplexNoise.new()
+var timer: float = 0.0
+var noise_timer: float = 0.0
+var noise_sample: float = 0.0
+
 func set_distance(amt: float):
 	if not orbit or amt == 0:
 		return
@@ -23,13 +28,13 @@ func set_distance(amt: float):
 	$BlipBody.position.x = amt
 	angular_velocity /= $BlipBody.position.x
 
-func shift_distance(amt: float):
+func shift_distance(amt: float = 1):
 	set_distance($BlipBody.position.x + amt)
 
 func set_path(pth: Array):
 	path = pth
 
-func set_target(trg: Bloid):
+func set_target(trg: Node2D):
 	if orbit and orbit == trg:
 		return
 	emit_signal("target", trg)
@@ -39,12 +44,14 @@ func set_target(trg: Bloid):
 	randomize()
 	random_distance = rand_range(100, 300)
 
-func attach(trg: Bloid):
+func attach(trg: Node2D):
 	if orbit:
 		return
 	emit_signal("attach", trg)
 	var angle = global_position.angle_to_point(trg.global_position)
 	var distance = global_position.distance_to(trg.global_position)
+	if distance < 1:
+		distance = 1
 	target = null
 	orbit = trg
 	var parent = get_parent()
@@ -52,7 +59,6 @@ func attach(trg: Bloid):
 		if parent:
 			parent.remove_child(self)
 		orbit.add_child(self)
-	orbit.add_blip(self)
 	global_position = orbit.global_position
 	$BlipBody.position.x = distance
 	rotation = angle
@@ -77,9 +83,27 @@ func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 	$BlipBody.color = c
 	$BlipBody.update()
 
+func _ready():
+	randomize()
+	noise.seed = randi()
+	noise.octaves = 4
+	noise.period = 10.0
+	noise.persistence = 0.8
+
+
 func _process(delta):
+	timer += delta
+	if timer > 10:
+		noise_timer += timer
+		timer = 0.0
+		noise_sample = noise.get_noise_1d(noise_timer)
 	if orbit:
 		rotation += (angular_velocity * delta)
+		var distance = 150 + (100 * noise_sample)
+		if $BlipBody.position.x < distance:
+			shift_distance()
+		elif $BlipBody.position.x > distance:
+			shift_distance(-1)
 		if path.size() > 0:
 			set_target(path.pop_front())
 	else:

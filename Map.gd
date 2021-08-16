@@ -5,11 +5,8 @@ var MAP_SIZE: int = 4000
 var BLOID_DENSITY: float = 0.01
 var CONNECTIVITY: float = 0.25
 var RANDOMNESS: float = 0.5
-var MAX_BLIPS: int = 5
-
 
 var Bloid = preload("res://Bloid.tscn")
-var Blip = preload("res://Blip.tscn")
 
 var selected_bloid = null
 var bloids: Array = []
@@ -26,9 +23,6 @@ func set_connectivity(value):
 
 func set_randomness(value):
 	RANDOMNESS = value
-
-func set_max_blips(value):
-	MAX_BLIPS = value
 
 func _bloid_too_close(point: Vector2) -> bool:
 	for bloid in bloids:
@@ -50,51 +44,28 @@ func _get_random_point(radius: float, origin: Vector2, retry: int = 0) -> Vector
 		point = _get_random_point(radius, origin, retry + 1)
 	return point
 
-func get_random_blip_position() -> Vector2:
-	randomize()
-	var distance = rand_range(100, 300)
-	var angle = rand_range(0, 2*PI)
-	return Vector2(
-		cos(angle) * distance,
-		sin(angle) * distance
-	)
-
-func create_blip(parent: Bloid, relative_pos: Vector2) -> Blip:
-	var new_blip = Blip.instance()
-	parent.add_child(new_blip)
-	blips.append(new_blip)
-	new_blip.global_position = parent.global_position + relative_pos
-	new_blip.linear_velocity = BLIP_VELOCITY
-	new_blip.attach(parent)
-	return new_blip
-
-func create_bloid(global_pos: Vector2, blip_coords: PoolVector2Array = []) -> Bloid:
+func create_bloid(global_pos: Vector2) -> Bloid:
 	var new_bloid = Bloid.instance()
-	add_child(new_bloid)
+	$Space.add_child(new_bloid)
 	bloids.append(new_bloid)
 	new_bloid.global_position = global_pos
-	for blip_pos in blip_coords:
-		create_blip(new_bloid, blip_pos)
 	return new_bloid
 
 func create_random_bloid(max_radius: float = MAP_SIZE, origin: Vector2 = Vector2.ZERO) -> Bloid:
 	var random_position = _get_random_point(max_radius, origin)
-	var blip_count: int = randi()%(MAX_BLIPS+1)
-	var blip_data: PoolVector2Array = []
-	for i in blip_count:
-		blip_data.append(get_random_blip_position())
-		
-	return create_bloid(random_position, blip_data)
+	return create_bloid(random_position)
 
 var connections: Array = []
 
 func build():
+	$Fog.reset()
 	# RESET WORLD
 	for blip in blips:
 		blip.queue_free()
 	blips = []
 	for bloid in bloids:
 		bloid.disconnect("selected", self, "handle_select_bloid")
+		bloid.disconnect("deselected", self, "handle_deselect_bloid")
 		bloid.queue_free()
 	bloids = []
 	connections = []
@@ -107,6 +78,7 @@ func build():
 		bloid_map[new_bloid.global_position] = new_bloid
 		bloid_points.append(new_bloid.global_position)
 		new_bloid.connect("selected", self, "handle_select_bloid")
+		new_bloid.connect("deselected", self, "handle_deselect_bloid")
 
 	# GENERATE DEULANCY TRIANGULATION
 	var super_triangle = BowyerWatson.min_inscribed_triangle(MAP_SIZE, Vector2.ZERO)
@@ -172,22 +144,21 @@ func build():
 	update()
 
 func handle_select_bloid(bloid: Bloid):
-	bloid.set_color(Color(0.1, 0.8, 0.4))
-	for blip in blips:
-		var start = blip.orbit if blip.orbit else blip.target
-		blip.set_path(Dijkstra.shortest_path(bloids, start, bloid))
-
-func _process(_delta):
 	pass
+
+func handle_deselect_bloid(bloid: Bloid):
+	pass
+
+func reveal_bloid(bloid: Bloid, size: float = 128):
+	$Fog.reveal_bloid(bloid, size)
+
+func hide_bloid(bloid: Bloid):
+	$Fog.hide_bloid(bloid)
 
 func _ready():
 	build()
 
-func _input(event):
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
-		for bloid in bloids:
-			bloid.set_color()
-
 func _draw():
-	for c in connections:
-		c.draw(self)
+	pass
+#	for c in connections:
+#		c.draw(self)
