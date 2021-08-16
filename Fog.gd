@@ -1,66 +1,77 @@
 extends Sprite
 
-const LIGHT_SIZE = 128
+const DIMENSIONS = Vector2(1920, 1080)
 const SCALE = 16
 
-var fogImage = Image.new()
-var fogTexture = ImageTexture.new()
-var lightImage = Image.new()
-var lightTexture = ImageTexture.new()
+var fog_image = Image.new()
+var fog_texture = ImageTexture.new()
 
-var revealed: Array = []
-
-var light_offset: Vector2 = Vector2.ZERO
+var revealed: Dictionary = {}
 
 func _ready():
-	light_offset = Vector2(1920.0 / 2.0, 1080.0 / 2.0) - Vector2(LIGHT_SIZE / 2.0, LIGHT_SIZE / 2.0)
 	scale *= SCALE
-	# Create Images
-	fogImage.create(1920, 1080, false, Image.FORMAT_RGBAH)
-	
-	lightImage.create(LIGHT_SIZE, LIGHT_SIZE, false, Image.FORMAT_RGBAH)
+	# Create Image
+	fog_image.create(DIMENSIONS.x, DIMENSIONS.y, false, Image.FORMAT_RGBAH)
 	# Fill Fog
-	fogImage.fill(Color(0, 0, 0, 1.0))
-	# Fill Light
-	lightImage.lock()
-	for x in range(LIGHT_SIZE):
-		for y in range(LIGHT_SIZE):
-			var color = Color(1, 1, 1, 0)
-			var dist = Vector2(x, y).distance_to(Vector2(LIGHT_SIZE/2, LIGHT_SIZE/2))
-			if dist < LIGHT_SIZE / 2.0:
-				color.a = 1 - dist/(LIGHT_SIZE/2)
-			lightImage.set_pixel(x, y, color)
-	lightImage.unlock()
-	lightTexture.create_from_image(lightImage)
+	fog_image.fill(Color(0, 0, 0, 1.0))
 	# Set Sprite Texture
-	fogTexture.create_from_image(fogImage)
-	set_texture(fogTexture)
+	fog_texture.create_from_image(fog_image)
+	set_texture(fog_texture)
 
 func reset():
-	revealed = []
-	fogImage.lock()
-	fogImage.fill(Color(0, 0, 0, 1.0))
-	fogImage.unlock()
-	fogTexture.create_from_image(fogImage)
-	set_texture(fogTexture)
+	revealed = {}
+	fog_image.lock()
+	fog_image.fill(Color(0, 0, 0, 1.0))
+	fog_image.unlock()
+	fog_texture.create_from_image(fog_image)
+	set_texture(fog_texture)
 
-func reveal_bloid(bloid: Bloid):
+func reveal_bloid(bloid: Bloid, size: float = 128):
 	if revealed.has(bloid):
 		return
-	revealed.append(bloid)
-	fogImage.lock()
+
+	var origin = (Vector2.ONE * size) / 2.0
+	var light_offset = DIMENSIONS / 2.0 - origin
+	var light_image = Image.new()
+	light_image.create(size, size, false, Image.FORMAT_RGBAH)
+	light_image.lock()
+	for x in range(size):
+		for y in range(size):
+			var color = Color(1, 1, 1, 0)
+			var dist = Vector2(x, y).distance_to(origin)
+			if dist < size / 2.0:
+				color.a = 1 - dist/(size/2)
+			light_image.set_pixel(x, y, color)
+	light_image.unlock()
+
+	revealed[bloid] = light_image
 	
-	fogImage.blend_rect(
-		lightImage,
-		Rect2(Vector2.ZERO, Vector2(LIGHT_SIZE, LIGHT_SIZE)),
+	fog_image.lock()
+	fog_image.blend_rect(
+		light_image,
+		Rect2(Vector2.ZERO, Vector2.ONE * size),
 		light_offset + (bloid.position/SCALE)
 	)
+	fog_image.unlock()
 	
-	fogImage.unlock()
-	fogTexture.create_from_image(fogImage)
-	set_texture(fogTexture)
-	
+	fog_texture.create_from_image(fog_image)
+	set_texture(fog_texture)
 
 func hide_bloid(bloid: Bloid):
-	# TODO
-	return
+	if not revealed.has(bloid):
+		return
+	revealed.erase(bloid)
+	fog_image.lock()
+	fog_image.fill(Color(0, 0, 0, 1.0))
+	for b in revealed:
+		var light_image = revealed[b]
+		var size = light_image.get_width()
+		var light_offset = DIMENSIONS / 2.0 - (Vector2.ONE * size) / 2.0
+		fog_image.blend_rect(
+			light_image,
+			Rect2(Vector2.ZERO, Vector2.ONE * size),
+			light_offset + (b.position/SCALE)
+		)
+	fog_image.unlock()
+	fog_texture.create_from_image(fog_image)
+	set_texture(fog_texture)

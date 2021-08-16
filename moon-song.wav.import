@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/moon-song.wav-ff71cea2d27efdc3017c00f09d7c5917.sample"
+
+[deps]
+
+source_file="res://moon-song.wav"
+dest_files=[ "res://.import/moon-song.wav-ff71cea2d27efdc3017c00f09d7c5917.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

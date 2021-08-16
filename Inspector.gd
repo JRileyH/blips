@@ -24,7 +24,6 @@ func _ready():
 	$CanvasLayer/Control/Panel/Density.connect("change", map, "set_bloid_density")
 	$CanvasLayer/Control/Panel/Connectivity.connect("change", map, "set_connectivity")
 	$CanvasLayer/Control/Panel/Randomness.connect("change", map, "set_randomness")
-	$CanvasLayer/Control/Panel/MaxBlips.connect("change", map, "set_max_blips")
 	$CanvasLayer/Control/Panel/Rebuild.connect("pressed", map, "build")
 
 func _process(delta):
