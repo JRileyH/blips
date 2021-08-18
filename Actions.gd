@@ -21,6 +21,16 @@ func _replace_action_positions():
 		var angle = ACTION_START + (i * ACTION_STEP)
 		action.reposition(i, angle, Vector2(cos(angle) * RADIUS, sin(angle) * RADIUS))
 
+func get_index_from_angle(angle: float):
+	var i = 0
+	var pointer = ACTION_START + (ACTION_STEP/2)
+	while pointer < (PI*2) + ACTION_START:
+		if angle < pointer:
+			return i
+		pointer += ACTION_STEP
+		i += 1
+	return i
+
 func add_action(action, at_index = null):
 	add_child(action)
 	at_index = _bind_index(at_index, actions.size())
@@ -28,7 +38,7 @@ func add_action(action, at_index = null):
 	_replace_action_positions()
 
 func select_action(action = null):
-	if action == null:
+	if action == null and selected_action != null:
 		selected_action.deselect()
 		selected_action = null
 	if not action in actions:
@@ -58,3 +68,10 @@ func get_action_from_global_point(point: Vector2):
 		if action.contains_point(point):
 			return action
 	return null
+
+func run_actions():
+	for action in actions:
+		if action.ACTION_TYPE in ["MOVE", "STAND_BY", "UPGRADE"]:
+			if action.run():
+				break
+		

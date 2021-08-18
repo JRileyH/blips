@@ -9,11 +9,13 @@ var linear_direction: Vector2
 var path: Array = []
 
 var traveling: bool = false
+var consuming: bool = false
 var approach_timer: float = 0.0
 var random_distance: float = 300.0
 
 signal attach
 signal detach
+signal consume
 signal target
 
 var noise = OpenSimplexNoise.new()
@@ -39,6 +41,7 @@ func set_target(trg: Node2D):
 		return
 	emit_signal("target", trg)
 	detach()
+	trg.blips.append(self)
 	traveling = true
 	target = trg
 	randomize()
@@ -79,6 +82,21 @@ func detach():
 	orbit.remove_blip(self)
 	orbit = null
 
+func consume():
+	if not orbit:
+		return
+	consuming = true
+	emit_signal("consume", orbit)
+	var angle = rotation
+	var distance = $BlipBody.position.x
+	var new_position = $BlipBody.global_position
+	rotation = 0
+	$BlipBody.position.x = 0
+	global_position = new_position
+	linear_direction = Vector2.DOWN.rotated(angle)
+	linear_velocity =  angular_velocity * distance
+	orbit.remove_blip(self)
+
 func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 	$BlipBody.color = c
 	$BlipBody.update()
@@ -93,6 +111,17 @@ func _ready():
 
 func _process(delta):
 	timer += delta
+	if consuming:
+		var angle = global_position.angle_to_point(orbit.global_position)
+		var distance = global_position.distance_to(orbit.global_position)
+		if distance < 20:
+			print("consumed")
+			queue_free()
+			update()
+			return
+		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
+		global_position += linear_direction * (linear_velocity * delta)
+		return
 	if timer > 10:
 		noise_timer += timer
 		timer = 0.0

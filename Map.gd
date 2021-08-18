@@ -46,6 +46,7 @@ func _get_random_point(radius: float, origin: Vector2, retry: int = 0) -> Vector
 
 func create_bloid(global_pos: Vector2) -> Bloid:
 	var new_bloid = Bloid.instance()
+	new_bloid.map = self
 	$Space.add_child(new_bloid)
 	bloids.append(new_bloid)
 	new_bloid.global_position = global_pos
@@ -149,7 +150,7 @@ func handle_select_bloid(bloid: Bloid):
 func handle_deselect_bloid(bloid: Bloid):
 	pass
 
-func reveal_bloid(bloid: Bloid, size: float = 128):
+func reveal_bloid(bloid: Bloid, size: float = 64):
 	$Fog.reveal_bloid(bloid, size)
 
 func hide_bloid(bloid: Bloid):

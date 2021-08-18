@@ -3,6 +3,7 @@ class_name AddAction
 
 const RADIUS: float = 30.0
 const OPTION_RADIUS: float = 8.0
+const ACTION_TYPE="ADD"
 
 class AddOption:
 	var _pos: Vector2
@@ -22,6 +23,9 @@ func _ready():
 	options.append(AddOption.new(Color(0.1, 0.45, 0.95), UpgradeAction))
 	reposition(index, angle, position)
 
+func start_drag():
+	pass
+
 func reposition(idx: int, ang: float, pos: Vector2):
 	.reposition(idx, ang, pos)
 	options[0]._pos = Vector2(cos(ang - PI/5) * RADIUS, sin(ang - PI/5) * RADIUS)
@@ -37,6 +41,9 @@ func _option_contains_point(point: Vector2) -> bool:
 func contains_point(point: Vector2) -> bool:
 	return .contains_point(point) or _option_contains_point(point)
 
+func to_string():
+	return "Add Action"
+
 func _input(event):
 	if selected and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		for option in options:
@@ -47,7 +54,7 @@ func _input(event):
 				get_parent().select_action(new_action)
 
 func _draw():
+	._draw()
 	if selected:
 		for option in options:
 			draw_circle(option._pos, OPTION_RADIUS, option._color)
-	draw_circle(Vector2.ZERO, radius, color)

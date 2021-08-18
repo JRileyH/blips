@@ -11,17 +11,15 @@ void fragment(){
 	vec4 tex = texture(TEXTURE, UV);
 	COLOR = vec4(color, 1.0 - tex.r);
 }
-
-vec4 multiply(vec4 base, vec4 blend){
-	return base * blend;
-}
 "
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
-shader_param/color = Vector3( 0.75, 0.8, 0.8 )
+shader_param/color = Vector3( 0.05, 0.1, 0.1 )
 
-[node name="Map" type="Node2D"]
+[node name="Map" type="Node2D" groups=[
+"Map",
+]]
 script = ExtResource( 1 )
 
 [node name="Space" type="Node2D" parent="."]

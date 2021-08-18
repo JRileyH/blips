@@ -26,10 +26,7 @@ func reset():
 	fog_texture.create_from_image(fog_image)
 	set_texture(fog_texture)
 
-func reveal_bloid(bloid: Bloid, size: float = 128):
-	if revealed.has(bloid):
-		return
-
+func _show_bloid(bloid: Node2D, size: float):
 	var origin = (Vector2.ONE * size) / 2.0
 	var light_offset = DIMENSIONS / 2.0 - origin
 	var light_image = Image.new()
@@ -53,13 +50,18 @@ func reveal_bloid(bloid: Bloid, size: float = 128):
 		light_offset + (bloid.position/SCALE)
 	)
 	fog_image.unlock()
-	
+
+func reveal_bloid(bloid: Node2D, size: float = 64):
+	if revealed.has(bloid):
+		if revealed[bloid].get_width() != size:
+			_hide_bloid(bloid)
+		else:
+			return
+	_show_bloid(bloid, size)
 	fog_texture.create_from_image(fog_image)
 	set_texture(fog_texture)
 
-func hide_bloid(bloid: Bloid):
-	if not revealed.has(bloid):
-		return
+func _hide_bloid(bloid: Node2D):
 	revealed.erase(bloid)
 	fog_image.lock()
 	fog_image.fill(Color(0, 0, 0, 1.0))
@@ -73,5 +75,10 @@ func hide_bloid(bloid: Bloid):
 			light_offset + (b.position/SCALE)
 		)
 	fog_image.unlock()
+
+func hide_bloid(bloid: Node2D):
+	if not revealed.has(bloid):
+		return
+	_hide_bloid(bloid)
 	fog_texture.create_from_image(fog_image)
 	set_texture(fog_texture)
