@@ -1,7 +1,7 @@
 extends Node2D
 class_name Action
 
-const font = preload("res://font.tres")
+const font = preload("res://UI/font.tres")
 
 var bloid: Node2D
 var selected: bool = false
