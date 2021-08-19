@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Inspector.gd" type="Script" id=1]
 [ext_resource path="res://Cursor.gd" type="Script" id=2]
-[ext_resource path="res://UI/Slider.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ui/Slider.tscn" type="PackedScene" id=3]
 
 [node name="Inspector" type="Node2D"]
 script = ExtResource( 1 )

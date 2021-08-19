@@ -2,5 +2,5 @@
 *~
 .import/
 logs/
-Dist/index.*
-Dist/favicon.*
+dist/index.*
+dist/favicon.*
