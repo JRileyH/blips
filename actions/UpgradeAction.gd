@@ -54,8 +54,8 @@ func _option_contains_point(point: Vector2) -> bool:
 func contains_point(point: Vector2) -> bool:
 	return .contains_point(point) or _option_contains_point(point)
 
-func get_stat_name(stat: int):
-	match stat:
+func get_stat_name(s: int):
+	match s:
 		bloid.STAT.VISIBILITY:
 			return "Visibility"
 		bloid.STAT.PRODUCTION:

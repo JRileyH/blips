@@ -92,7 +92,7 @@ func build():
 		return minimal_span
 	
 	# GENERATE EXTRA CONNECTIONS
-	var EXTRA_SIZE: int = floor((triangulation.size() - minimal_span.size()) * CONNECTIVITY)
+	var EXTRA_SIZE: int = int(floor((triangulation.size() - minimal_span.size()) * CONNECTIVITY))
 	
 	# FIRST PART IS THE LOWEST SPANNING CONNECTIONS
 	var lowest_extras = []
@@ -144,10 +144,10 @@ func build():
 	
 	update()
 
-func handle_select_bloid(bloid: Bloid):
+func handle_select_bloid(_bloid: Bloid):
 	pass
 
-func handle_deselect_bloid(bloid: Bloid):
+func handle_deselect_bloid(_bloid: Bloid):
 	pass
 
 func reveal_bloid(bloid: Bloid, size: float = 64):

@@ -28,8 +28,8 @@ func stop_drag():
 	if not dragging:
 		return
 	dragging = false
-	var index = max(1, get_parent().get_index_from_angle(position.angle_to_point(Vector2.ZERO)))
-	get_parent().move_action(self, index)
+	var idx = max(1, get_parent().get_index_from_angle(position.angle_to_point(Vector2.ZERO)))
+	get_parent().move_action(self, idx)
 	
 
 func reposition(idx: int, ang: float, pos: Vector2):
@@ -50,7 +50,7 @@ func _input(event):
 	if dragging and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and not event.pressed:
 		stop_drag()
 
-func _process(delta):
+func _process(_delta):
 	if dragging:
 		global_position = get_global_mouse_position()
 

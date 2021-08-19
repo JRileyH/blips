@@ -9,9 +9,6 @@ export(Color) var color = Color(0.3, 0.4, 0.4)
 signal selected
 signal deselected
 
-signal action_selected
-signal action_deselected
-
 var production_timer: float = 0.0
 var action_timer: float = 0.0
 
