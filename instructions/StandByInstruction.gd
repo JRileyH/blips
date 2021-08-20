@@ -1,6 +1,6 @@
 extends Instruction
-class_name StandByInstruction
-const ACTION_TYPE="STAND_BY"
+
+const TYPE="STAND_BY"
 
 var until: int = -1
 
@@ -9,7 +9,7 @@ func run():
 		# Values have not yet been set for this action
 		print("Skipping stand by because uninitialized")
 		return false
-	if bloid.blips.size() > until:
+	if bloid.blips().size() > until:
 		# action limit is fulfilled
 		print("Skipping stand by because limit fulfilled")
 		return false

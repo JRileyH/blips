@@ -1,20 +1,6 @@
 extends Instruction
-class_name UpgradeInstruction
 
-const RADIUS: float = 30.0
-const OPTION_RADIUS: float = 8.0
-class AddOption:
-	var _pos: Vector2
-	var _color: Color
-	var _stat: int
-	
-	func _init(color: Color, stat: int):
-		_color = color
-		_stat = stat
-
-var options: Array = []
-
-const ACTION_TYPE="UPGRADE"
+const TYPE="UPGRADE"
 
 var until: int = -1
 var stat: int = -1
@@ -32,29 +18,15 @@ func run():
 		# action limit is fulfilled
 		print("Skipping upgrade because limit fulfilled")
 		return false
-	if bloid.blips.size() == 0:
+	if bloid.blips().size() == 0:
 		# No blips to perform action
 		print("Skipping upgrade because no blips")
 		return false
 	bloid.update_stat(stat)
-	print("Upgrading")
+	print("Upgrading %s" % [stat_to_string(stat)])
 	return true
 
-func reposition(idx: int, ang: float, pos: Vector2):
-	.reposition(idx, ang, pos)
-	for i in range(4):
-		options[i]._pos = Vector2(cos(ang) * (RADIUS + (i * RADIUS)) , sin(ang) * (RADIUS + (i * RADIUS)))
-
-func _option_contains_point(point: Vector2) -> bool:
-	for option in options:
-		if to_global(option._pos).distance_to(point) < OPTION_RADIUS:
-			return true
-	return false
-
-func contains_point(point: Vector2) -> bool:
-	return .contains_point(point) or _option_contains_point(point)
-
-func get_stat_name(s: int):
+func stat_to_string(s: int):
 	match s:
 		bloid.STAT.VISIBILITY:
 			return "Visibility"
@@ -67,7 +39,7 @@ func get_stat_name(s: int):
 	return "Nothing"
 
 func to_string():
-	return "Upgrade %s until %s" % [get_stat_name(stat), until]
+	return "Upgrade %s until %s" % [stat_to_string(stat), until]
 
 func _input(event):
 	if selected and event is InputEventKey and event.pressed:
@@ -81,23 +53,44 @@ func _input(event):
 			else:
 				until = int("%s%s" % [until, input])
 			update()
-	if selected and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
-		for option in options:
-			if option._pos.distance_to(get_local_mouse_position()) < OPTION_RADIUS:
-				color = option._color
-				stat = option._stat
-				update()
+
+func change_to_visibility():
+	stat = bloid.STAT.VISIBILITY
+	color = $ChangeVisibility.color
+	update()
+
+func change_to_capacity():
+	stat = bloid.STAT.CAPACITY
+	color = $ChangeCapacity.color
+	update()
+
+func change_to_production():
+	stat = bloid.STAT.VISIBILITY
+	color = $ChangeProduction.color
+	update()
+
+func change_to_efficiency():
+	stat = bloid.STAT.EFFICIENCY
+	color = $ChangeEfficiency.color
+	update()
+
+func select():
+	.select()
+	$ChangeVisibility.visible = true
+	$ChangeCapacity.visible = true
+	$ChangeProduction.visible = true
+	$ChangeEfficiency.visible = true
+
+func deselect():
+	.deselect()
+	$ChangeVisibility.visible = false
+	$ChangeCapacity.visible = false
+	$ChangeProduction.visible = false
+	$ChangeEfficiency.visible = false
 
 func _ready():
 	color = Color(0.1, 0.45, 0.95)
-	options.append(AddOption.new(Color(0.8, 0.9, 0.1), bloid.STAT.VISIBILITY))
-	options.append(AddOption.new(Color(0.3, 0.9, 0.1), bloid.STAT.PRODUCTION))
-	options.append(AddOption.new(Color(0.8, 0.2, 0.7), bloid.STAT.CAPACITY))
-	options.append(AddOption.new(Color(0.3, 0.9, 0.9), bloid.STAT.EFFICIENCY))
-	reposition(index, angle, position)
-
-func _draw():
-	._draw()
-	if selected:
-		for option in options:
-			draw_circle(option._pos, OPTION_RADIUS, option._color)
+	$ChangeVisibility.connect("click", self, "change_to_visibility")
+	$ChangeCapacity.connect("click", self, "change_to_capacity")
+	$ChangeProduction.connect("click", self, "change_to_production")
+	$ChangeEfficiency.connect("click", self, "change_to_efficiency")

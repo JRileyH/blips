@@ -102,6 +102,7 @@ func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 	$BlipBody.update()
 
 func _ready():
+	add_to_group('blips')
 	randomize()
 	noise.seed = randi()
 	noise.octaves = 4

@@ -7,7 +7,7 @@ onready var inspector = $Inspector
 func _ready():
 	randomize()
 	var starter_bloid = map.bloids[randi() % map.bloids.size()]
-	starter_bloid.activate()
+	starter_bloid.claim()
 	inspector.global_position = starter_bloid.global_position
 	map.reveal_bloid(starter_bloid)
 	

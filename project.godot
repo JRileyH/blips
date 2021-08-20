@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Instruction",
-"class": "AddInstruction",
-"language": "GDScript",
-"path": "res://instructions/AddInstruction.gd"
-}, {
 "base": "Node2D",
 "class": "Blip",
 "language": "GDScript",
@@ -29,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utility/BowyerWatson.gd"
 }, {
+"base": "Area2D",
+"class": "Clickable",
+"language": "GDScript",
+"path": "res://Clickable.gd"
+}, {
 "base": "Resource",
 "class": "Dijkstra",
 "language": "GDScript",
@@ -39,7 +39,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utility/Geom.gd"
 }, {
-"base": "Area2D",
+"base": "Selectable",
 "class": "Instruction",
 "language": "GDScript",
 "path": "res://instructions/Instruction.gd"
@@ -49,39 +49,21 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://utility/MinimalSpanningTree.gd"
 }, {
-"base": "Instruction",
-"class": "MoveInstruction",
-"language": "GDScript",
-"path": "res://instructions/MoveInstruction.gd"
-}, {
 "base": "Area2D",
 "class": "Selectable",
 "language": "GDScript",
 "path": "res://Selectable.gd"
-}, {
-"base": "Instruction",
-"class": "StandByInstruction",
-"language": "GDScript",
-"path": "res://instructions/StandByInstruction.gd"
-}, {
-"base": "Instruction",
-"class": "UpgradeInstruction",
-"language": "GDScript",
-"path": "res://instructions/UpgradeInstruction.gd"
 } ]
 _global_script_class_icons={
-"AddInstruction": "",
 "Blip": "",
 "Bloid": "",
 "BowyerWatson": "",
+"Clickable": "",
 "Dijkstra": "",
 "Geom": "",
 "Instruction": "",
 "MinimalSpanningTree": "",
-"MoveInstruction": "",
-"Selectable": "",
-"StandByInstruction": "",
-"UpgradeInstruction": ""
+"Selectable": ""
 }
 
 [application]

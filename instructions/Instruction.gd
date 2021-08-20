@@ -1,43 +1,36 @@
-extends Area2D
+extends Selectable
 class_name Instruction
 
 func get_class(): return "Instruction"
 
-const font = preload("res://ui/font.tres")
-
-var bloid: Node2D
-var selected: bool = false
+var bloid: Selectable
 var dragging: bool = false
-var radius = 15.0
-var color = Color(1.0, 1.0, 1.0)
-var index: int = 0
-var angle: float = 0
-
-func select():
-	selected = true
-	update()
-
-func deselect():
-	selected = false
-	update()
 
 func start_drag():
 	if dragging:
 		return
 	dragging = true
 
+"""
+const ACTION_START = -3*PI/8
+const ACTION_STEP = PI/8
+func get_index_from_angle(angle: float):
+	var i = 0
+	var pointer = ACTION_START + (ACTION_STEP/2)
+	while pointer < (PI*2) + ACTION_START:
+		if angle < pointer:
+			return i
+		pointer += ACTION_STEP
+		i += 1
+	return i
+"""
+
 func stop_drag():
 	if not dragging:
 		return
 	dragging = false
-	var idx = max(1, get_parent().get_index_from_angle(position.angle_to_point(Vector2.ZERO)))
-	get_parent().move_action(self, idx)
-	
-
-func reposition(idx: int, ang: float, pos: Vector2):
-	index = idx
-	angle = ang
-	position = pos
+	#var idx = max(1, get_parent().get_index_from_angle(position.angle_to_point(Vector2.ZERO)))
+	get_parent().move_action(self, 1)
 
 func contains_point(point: Vector2) -> bool:
 	return global_position.distance_to(point) < radius
@@ -56,12 +49,13 @@ func _process(_delta):
 	if dragging:
 		global_position = get_global_mouse_position()
 
-var area: CollisionShape2D
 func _ready():
+	add_to_group('instructions')
 	bloid = get_parent().get_parent()
 
+const font = preload("res://ui/font.tres")
 func _draw():
-	draw_string(font, Vector2(50, 0), to_string())
-	if selected:
-		draw_circle(Vector2.ZERO, radius + 2, Color(0.45, 0.9, 0.5))
-	draw_circle(Vector2.ZERO, radius, color)
+	._draw()
+	draw_set_transform(Vector2(0, 0), -rotation, Vector2(1, 1))
+	draw_string(font, Vector2(60, 0), to_string())
+	draw_set_transform(Vector2(0, 0), 0, Vector2(1, 1))
