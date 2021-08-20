@@ -1,5 +1,7 @@
-extends Node2D
-class_name Action
+extends Area2D
+class_name Instruction
+
+func get_class(): return "Instruction"
 
 const font = preload("res://ui/font.tres")
 
@@ -54,6 +56,7 @@ func _process(_delta):
 	if dragging:
 		global_position = get_global_mouse_position()
 
+var area: CollisionShape2D
 func _ready():
 	bloid = get_parent().get_parent()
 

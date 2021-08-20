@@ -1,5 +1,5 @@
-extends Action
-class_name MoveAction
+extends Instruction
+class_name MoveInstruction
 
 const ACTION_TYPE="MOVE"
 

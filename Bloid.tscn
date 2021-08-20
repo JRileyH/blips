@@ -1,16 +1,12 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Bloid.gd" type="Script" id=1]
 [ext_resource path="res://Actions.gd" type="Script" id=2]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 40.0
-
 [node name="Bloid" type="Area2D"]
 script = ExtResource( 1 )
-
-[node name="Area" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+radius = 40.0
+color = Color( 0.168627, 0.313726, 0.219608, 1 )
 
 [node name="Actions" type="Node2D" parent="."]
 visible = false

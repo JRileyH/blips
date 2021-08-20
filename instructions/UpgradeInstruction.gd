@@ -1,5 +1,5 @@
-extends Action
-class_name UpgradeAction
+extends Instruction
+class_name UpgradeInstruction
 
 const RADIUS: float = 30.0
 const OPTION_RADIUS: float = 8.0

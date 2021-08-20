@@ -1,13 +1,9 @@
-extends Node2D
+extends Selectable
 class_name Bloid
 
+func get_class(): return "Bloid"
+
 var Blip = preload("res://Blip.tscn")
-
-export (float) var radius = 40.0
-export(Color) var color = Color(0.3, 0.4, 0.4)
-
-signal selected
-signal deselected
 
 var production_timer: float = 0.0
 var action_timer: float = 0.0
@@ -16,7 +12,6 @@ var blips: Array = []
 var neighbors: Array = []
 
 var active: bool = false
-var selected: bool = false
 
 var map: Node2D
 
@@ -48,7 +43,7 @@ var stats: Dictionary = {
 func activate():
 	active = true
 	$Actions.add_action(
-		AddAction.new()
+		AddInstruction.new()
 	)
 
 func update_stat(stat: int):
@@ -102,16 +97,12 @@ func set_color(c: Color = Color(0.6, 0.6, 0.6)):
 	update()
 
 func select():
-	selected = true
-	emit_signal("selected", self)
+	.select()
 	$Actions.visible = true
-	update()
 
 func deselect():
-	selected = false
-	emit_signal("deselected", self)
+	.deselect()
 	$Actions.visible = false
-	update()
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
@@ -127,7 +118,7 @@ func _input(event):
 			$Actions.select_action()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		var action = $Actions.get_action_from_global_point(get_global_mouse_position())
-		if selected and action and not action is AddAction:
+		if selected and action and not action is AddInstruction:
 			$Actions.remove_action(action)
 
 func _process(delta):
@@ -141,8 +132,3 @@ func _process(delta):
 		action_timer = 0.0
 		if active:
 			$Actions.run_actions()
-	
-func _draw():
-	if selected:
-		draw_circle(Vector2.ZERO, radius + 2, Color(0.45, 0.9, 0.5))
-	draw_circle(Vector2.ZERO, radius, color)

@@ -1,6 +1,5 @@
-extends Action
-class_name StandByAction
-
+extends Instruction
+class_name StandByInstruction
 const ACTION_TYPE="STAND_BY"
 
 var until: int = -1

@@ -1,5 +1,5 @@
-extends Action
-class_name AddAction
+extends Instruction
+class_name AddInstruction
 
 const RADIUS: float = 30.0
 const OPTION_RADIUS: float = 8.0
@@ -18,9 +18,9 @@ var options: Array = []
 
 func _ready():
 	color = Color(0.5, 0.6, 0.65)
-	options.append(AddOption.new(Color(0.7, 0.45, 0.55), MoveAction))
-	options.append(AddOption.new(Color(0.2, 0.85, 0.35), StandByAction))
-	options.append(AddOption.new(Color(0.1, 0.45, 0.95), UpgradeAction))
+	options.append(AddOption.new(Color(0.7, 0.45, 0.55), MoveInstruction))
+	options.append(AddOption.new(Color(0.2, 0.85, 0.35), StandByInstruction))
+	options.append(AddOption.new(Color(0.1, 0.45, 0.95), UpgradeInstruction))
 	reposition(index, angle, position)
 
 func start_drag():
@@ -42,7 +42,7 @@ func contains_point(point: Vector2) -> bool:
 	return .contains_point(point) or _option_contains_point(point)
 
 func to_string():
-	return "Add Action"
+	return "Add Instruction"
 
 func _input(event):
 	if selected and event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
