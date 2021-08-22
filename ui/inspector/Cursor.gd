@@ -4,7 +4,10 @@ var selected_bloid: Area2D
 var selected_instruction: Area2D
 
 func click_bloid(bloid: Area2D):
-	if selected_bloid != bloid:
+	if selected_instruction and selected_instruction.TYPE == "MOVE" and bloid != selected_instruction.bloid:
+		selected_instruction.target = bloid
+		selected_instruction.update()
+	elif selected_bloid != bloid:
 		if selected_bloid:
 			selected_bloid.deselect()
 		selected_bloid = bloid
@@ -21,11 +24,12 @@ func click_instruction(instruction: Area2D):
 			selected_instruction.deselect()
 		selected_instruction = instruction
 		instruction.select()
+	else:
+		instruction.start_drag()
 
 func right_click_instruction(instruction: Area2D):
-	if selected_instruction == instruction:
-		selected_instruction = null
-		instruction.deselect()
+	if instruction.TYPE != "ADD":
+		instruction.bloid.remove_instruction(instruction)
 
 func handle_click(body: Area2D, button_index: int, pressed: bool):
 	if pressed:

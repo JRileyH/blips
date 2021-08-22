@@ -9,7 +9,7 @@ func run():
 		# Values have not yet been set for this action
 		print("Skipping stand by because uninitialized")
 		return false
-	if bloid.blips().size() > until:
+	if bloid.blips.size() >= until:
 		# action limit is fulfilled
 		print("Skipping stand by because limit fulfilled")
 		return false
@@ -18,9 +18,6 @@ func run():
 
 func to_string():
 	return "Standing By until %s" % [until]
-
-func _ready():
-	color = Color(0.2, 0.85, 0.35)
 
 func _input(event):
 	if selected and event is InputEventKey and event.pressed:

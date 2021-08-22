@@ -1,31 +1,16 @@
 extends Node2D
 class_name Blip
 
-var target = null
-var orbit = null
 var angular_velocity: float = 0.0
 var linear_velocity: float = 0.0
 var linear_direction: Vector2
 var path: Array = []
 
-var traveling: bool = false
-var consuming: bool = false
-var approach_timer: float = 0.0
-var random_distance: float = 300.0
-
-signal attach
-signal detach
-signal consume
-signal target
-
-var noise = OpenSimplexNoise.new()
-var timer: float = 0.0
-var noise_timer: float = 0.0
-var noise_sample: float = 0.0
+var bloid: Area2D
+var target: Area2D
+var attached: bool = false
 
 func set_distance(amt: float):
-	if not orbit or amt == 0:
-		return
 	angular_velocity *= $BlipBody.position.x
 	$BlipBody.position.x = amt
 	angular_velocity /= $BlipBody.position.x
@@ -36,41 +21,20 @@ func shift_distance(amt: float = 1):
 func set_path(pth: Array):
 	path = pth
 
-func set_target(trg: Node2D):
-	if orbit and orbit == trg:
+func attach():
+	if attached:
 		return
-	emit_signal("target", trg)
-	detach()
-	trg.blips.append(self)
-	traveling = true
-	target = trg
-	randomize()
-	random_distance = rand_range(100, 300)
-
-func attach(trg: Node2D):
-	if orbit:
-		return
-	emit_signal("attach", trg)
-	var angle = global_position.angle_to_point(trg.global_position)
-	var distance = global_position.distance_to(trg.global_position)
-	if distance < 1:
-		distance = 1
-	target = null
-	orbit = trg
-	var parent = get_parent()
-	if parent != orbit:
-		if parent:
-			parent.remove_child(self)
-		orbit.add_child(self)
-	global_position = orbit.global_position
+	var angle = global_position.angle_to_point(get_parent().global_position)
+	var distance = max(1, global_position.distance_to(get_parent().global_position))
+	position = Vector2.ZERO
 	$BlipBody.position.x = distance
 	rotation = angle
-	angular_velocity = linear_velocity / distance if distance != 0 else 0
+	angular_velocity = linear_velocity / distance
+	attached = true
 
 func detach():
-	if not orbit:
+	if not attached:
 		return
-	emit_signal("detach", orbit)
 	var angle = rotation
 	var distance = $BlipBody.position.x
 	var new_position = $BlipBody.global_position
@@ -79,76 +43,36 @@ func detach():
 	global_position = new_position
 	linear_direction = Vector2.DOWN.rotated(angle)
 	linear_velocity =  angular_velocity * distance
-	orbit.remove_blip(self)
-	orbit = null
+	attached = false
 
-func consume():
-	if not orbit:
-		return
-	consuming = true
-	emit_signal("consume", orbit)
-	var angle = rotation
-	var distance = $BlipBody.position.x
-	var new_position = $BlipBody.global_position
-	rotation = 0
-	$BlipBody.position.x = 0
-	global_position = new_position
-	linear_direction = Vector2.DOWN.rotated(angle)
-	linear_velocity =  angular_velocity * distance
-	orbit.remove_blip(self)
-
-func set_color(c: Color = Color(0.6, 0.6, 0.6)):
-	$BlipBody.color = c
-	$BlipBody.update()
-
+var orbit: float = 100.0
 func _ready():
 	add_to_group('blips')
+	linear_velocity = 100.0
+	attach()
 	randomize()
-	noise.seed = randi()
-	noise.octaves = 4
-	noise.period = 10.0
-	noise.persistence = 0.8
+	orbit += rand_range(0.0, 200.0)
 
 
 func _process(delta):
-	timer += delta
-	if consuming:
-		var angle = global_position.angle_to_point(orbit.global_position)
-		var distance = global_position.distance_to(orbit.global_position)
+	if target:
+		var angle = global_position.angle_to_point(target.global_position)
+		var distance = global_position.distance_to(target.global_position)
+		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
+		global_position += linear_direction * (linear_velocity * delta)
 		if distance < 20:
 			print("consumed")
 			queue_free()
 			update()
-			return
-		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
-		global_position += linear_direction * (linear_velocity * delta)
-		return
-	if timer > 10:
-		noise_timer += timer
-		timer = 0.0
-		noise_sample = noise.get_noise_1d(noise_timer)
-	if orbit:
+	if attached:
+		var distance = $BlipBody.global_position.distance_to(get_parent().global_position)
+		if distance > orbit + 10:
+			return detach()
 		rotation += (angular_velocity * delta)
-		var distance = 150 + (100 * noise_sample)
-		if $BlipBody.position.x < distance:
+		if distance < orbit - 10:
 			shift_distance()
-		elif $BlipBody.position.x > distance:
-			shift_distance(-1)
-		if path.size() > 0:
-			set_target(path.pop_front())
 	else:
-		if target:
-			var angle = global_position.angle_to_point(target.global_position)
-			var distance = global_position.distance_to(target.global_position)
-			if traveling and distance < random_distance:
-				traveling = false
-				approach_timer = 0.0
-			if not traveling:
-				approach_timer += delta
-				if approach_timer > 1:
-					attach(target)
-					return
-			var normal = Vector2.LEFT if traveling else Vector2.DOWN
-			linear_direction = linear_direction.linear_interpolate(normal.rotated(angle), 0.01)
-			
+		var angle = global_position.angle_to_point(get_parent().global_position)
+		var distance = global_position.distance_to(get_parent().global_position)
+		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
 		global_position += linear_direction * (linear_velocity * delta)

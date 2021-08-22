@@ -6,6 +6,9 @@ func get_class(): return "Bloid"
 var Blip = preload("res://Blip.tscn")
 var AddInstruction = preload("res://instructions/AddInstruction.tscn")
 
+static func INSTRUCTION_START():
+	return
+
 var production_timer: float = 0.0
 var action_timer: float = 0.0
 
@@ -64,7 +67,7 @@ func _process(delta):
 	action_timer += delta
 	if production_timer > 5.0 - (0.04 * stats[STAT.PRODUCTION]):
 		production_timer = 0.0
-		if claimed and blips().size() < stats[STAT.CAPACITY]:
+		if claimed and blips.size() < stats[STAT.CAPACITY]:
 			add_blip()
 	if action_timer > 3.0 - (0.025 * stats[STAT.EFFICIENCY]):
 		action_timer = 0.0
@@ -80,7 +83,8 @@ func instructions():
 
 func run_instructions():
 	for instruction in instructions():
-		instruction.run()
+		if instruction.run():
+			break
 
 func add_instruction(instruction: Area2D):
 	if not instruction:
@@ -106,10 +110,10 @@ func _position_instructions():
 	var instructions = instructions()
 	for i in instructions.size():
 		var instruction = instructions[i]
-		# TODO: Make constants
-		var angle = -3*PI/8 + (i * PI/8)
-		instruction.position = Vector2(cos(angle) * 90, sin(angle) * 90)
+		var angle = BloidConfig.INSTRUCTION_START + (i * BloidConfig.INSTRUCTION_STEP)
+		instruction.position = Vector2(cos(angle) * BloidConfig.INSTRUCTION_RADIUS, sin(angle) * BloidConfig.INSTRUCTION_RADIUS)
 		instruction.rotation = angle
+		instruction.update()
 
 ############################
 
@@ -118,29 +122,29 @@ func _position_instructions():
 ###                    ###
 # TODO: check and see if adding also removes in one action
 
-func blips():
-	return $Blips.get_children()
+var blips: Array = []
 
 func add_blip(blip: Node2D = null) -> Node2D:
 	if not blip:
 		blip = Blip.instance()
-	if get_parent() == blip.get_parent():
-		get_parent().remove_child(blip)
+	if blip.bloid and blip.bloid != self:
+		blip.bloid.blips.erase(blip)
+		blip.get_parent().remove_child(blip)
+	blip.bloid = self
 	$Blips.add_child(blip)
+	blips.append(blip)
 	return blip
 
-func remove_blip(blip: Node2D = null) -> Node2D:
-	var blips = blips()
+func consume_blip(blip: Node2D = null) -> bool:
 	if blips.size() > 0 and not blip:
-		blip = blips()[0]
-	if not blip or blip.get_parent() != $Blips:
-		return blip
-	$Blips.remove_child(blip)
-	get_parent().add_child(blip)
-	return blip
+		blip = blips[0]
+	if not blip:
+		return false
+	blip.detach()
+	blip.target = self
+	blips.erase(blip)
+	return true
 
-func consume_blip(blip: Node2D = null) -> void:
-	remove_blip(blip).consume()
 
 ##########################
 

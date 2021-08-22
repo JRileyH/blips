@@ -4,3 +4,4 @@
 
 [node name="StandByInstruction" type="Area2D"]
 script = ExtResource( 1 )
+color = Color( 0.34902, 0.678431, 0.4, 1 )

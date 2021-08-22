@@ -18,7 +18,7 @@ func run():
 		# action limit is fulfilled
 		print("Skipping upgrade because limit fulfilled")
 		return false
-	if bloid.blips().size() == 0:
+	if bloid.blips.size() == 0:
 		# No blips to perform action
 		print("Skipping upgrade because no blips")
 		return false
@@ -89,7 +89,6 @@ func deselect():
 	$ChangeEfficiency.visible = false
 
 func _ready():
-	color = Color(0.1, 0.45, 0.95)
 	$ChangeVisibility.connect("click", self, "change_to_visibility")
 	$ChangeCapacity.connect("click", self, "change_to_capacity")
 	$ChangeProduction.connect("click", self, "change_to_production")

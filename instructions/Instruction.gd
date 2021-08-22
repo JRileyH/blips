@@ -29,8 +29,15 @@ func stop_drag():
 	if not dragging:
 		return
 	dragging = false
-	#var idx = max(1, get_parent().get_index_from_angle(position.angle_to_point(Vector2.ZERO)))
-	get_parent().move_action(self, 1)
+	var angle = position.angle_to_point(Vector2.ZERO)
+	var i = 0
+	var p = BloidConfig.INSTRUCTION_START + (BloidConfig.INSTRUCTION_STEP/2)
+	while p < (PI*2) + BloidConfig.INSTRUCTION_START:
+		if angle < p:
+			break
+		i += 1
+		p += BloidConfig.INSTRUCTION_STEP
+	bloid.move_instruction(self, max(1, i))
 
 func contains_point(point: Vector2) -> bool:
 	return global_position.distance_to(point) < radius
