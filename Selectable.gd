@@ -29,19 +29,21 @@ func deselect():
 	emit_signal("deselected", self)
 	update()
 
-func hover():
+func handle_hover_event():
 	hovered = true
 	emit_signal("hovered", self)
 	update()
+	cursor.handle_hover(self, true)
 
-func unhover():
+func handle_unhover_event():
 	hovered = false
 	emit_signal("unhovered", self)
 	update()
+	cursor.handle_hover(self, false)
 
 func handle_input_event(_viewport: Node, event: InputEventMouseButton, _shape_idx: int):
 	if event:
-		cursor.handle_click(self, event.button_index, event.pressed)
+		cursor.handle_click(self, event)
 
 func _ready():
 	area = CollisionShape2D.new()
@@ -49,8 +51,8 @@ func _ready():
 	area.shape.radius = radius
 	add_child(area)
 	connect("input_event", self, "handle_input_event")
-	connect("mouse_entered", self, "hover")
-	connect("mouse_exited", self, "unhover")
+	connect("mouse_entered", self, "handle_hover_event")
+	connect("mouse_exited", self, "handle_unhover_event")
 
 func _draw():
 	if selected:

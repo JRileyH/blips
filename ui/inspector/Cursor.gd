@@ -1,5 +1,6 @@
 extends Node2D
 
+var hovered_selectable: Area2D
 var selected_bloid: Area2D
 var selected_instruction: Area2D
 
@@ -31,18 +32,30 @@ func right_click_instruction(instruction: Area2D):
 	if instruction.TYPE != "ADD":
 		instruction.bloid.remove_instruction(instruction)
 
-func handle_click(body: Area2D, button_index: int, pressed: bool):
-	if pressed:
+func handle_click(body: Area2D, event: InputEventMouseButton):
+	if event.pressed:
 		match body.get_class():
 			"Bloid":
-				match button_index:
+				match event.button_index:
 					BUTTON_LEFT:
 						click_bloid(body)
 					BUTTON_RIGHT:
 						right_click_bloid(body)
 			"Instruction":
-				match button_index:
+				match event.button_index:
 					BUTTON_LEFT:
 						click_instruction(body)
 					BUTTON_RIGHT:
 						right_click_instruction(body)
+
+func handle_hover(body: Area2D, hovered: bool):
+	hovered_selectable = body if hovered else null
+
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and not hovered_selectable:
+		if selected_bloid:
+			selected_bloid.deselect()
+			selected_bloid = null
+		if selected_instruction:
+			selected_instruction.deselect()
+			selected_instruction = null

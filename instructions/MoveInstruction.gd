@@ -22,7 +22,7 @@ func run():
 		# No blips to perform action
 		print("Skipping move to because no blips")
 		return false
-	target.add_blip(bloid.blips[0])
+	bloid.blips[0].path = Dijkstra.shortest_path(bloid.map.bloids, bloid, target)
 	print("Moving")
 	return true
 

@@ -55,7 +55,19 @@ func _ready():
 
 
 func _process(delta):
-	if target:
+	if path.size() > 0:
+		if not target:
+			target = path.pop_front()
+		var angle = global_position.angle_to_point(target.global_position)
+		var distance = global_position.distance_to(target.global_position)
+		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
+		global_position += linear_direction * (linear_velocity * delta)
+		if distance < 100:
+			if path.size() == 0:
+				print("dood")
+				target.add_blip(self)
+			target = null
+	elif target:
 		var angle = global_position.angle_to_point(target.global_position)
 		var distance = global_position.distance_to(target.global_position)
 		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
@@ -64,7 +76,7 @@ func _process(delta):
 			print("consumed")
 			queue_free()
 			update()
-	if attached:
+	elif attached:
 		var distance = $BlipBody.global_position.distance_to(get_parent().global_position)
 		if distance > orbit + 10:
 			return detach()
@@ -73,6 +85,5 @@ func _process(delta):
 			shift_distance()
 	else:
 		var angle = global_position.angle_to_point(get_parent().global_position)
-		var distance = global_position.distance_to(get_parent().global_position)
 		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
 		global_position += linear_direction * (linear_velocity * delta)

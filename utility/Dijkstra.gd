@@ -1,8 +1,7 @@
 extends Resource
 class_name Dijkstra
 
-
-static func shortest_path(map: Array, src: Bloid, trg: Bloid):
+static func shortest_path(map: Array, src: Area2D, trg: Area2D):
 	if not src in map or not trg in map:
 		push_error("Source or target bloids %s, %s not in map %s" % [src, trg, map])
 		return []
@@ -17,7 +16,7 @@ static func shortest_path(map: Array, src: Bloid, trg: Bloid):
 	cost[src] = 0
 
 	while bloids.size() > 0:
-		var node: Bloid
+		var node: Area2D
 		for bloid in bloids:
 			if not node or cost[bloid] < cost[node]:
 				node = bloid
@@ -32,7 +31,7 @@ static func shortest_path(map: Array, src: Bloid, trg: Bloid):
 				cost[neighbor] = distance
 				path[neighbor] = node
 	var out: Array = []
-	var next: Bloid = trg
+	var next: Area2D = trg
 	while next and next != src and next in path:
 		out.push_front(next)
 		next = path[next]
