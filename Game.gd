@@ -9,7 +9,7 @@ func _ready():
 	var starter_bloid = map.bloids[randi() % map.bloids.size()]
 	starter_bloid.claim()
 	inspector.global_position = starter_bloid.global_position
-	map.reveal_bloid(starter_bloid)
+	map.reveal_bloid(starter_bloid, 256)
 	
 
 func _process(delta):

@@ -64,7 +64,6 @@ func _process(delta):
 		global_position += linear_direction * (linear_velocity * delta)
 		if distance < 100:
 			if path.size() == 0:
-				print("dood")
 				target.add_blip(self)
 			target = null
 	elif target:

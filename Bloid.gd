@@ -125,14 +125,18 @@ func _position_instructions():
 var blips: Array = []
 
 func add_blip(blip: Node2D = null) -> Node2D:
+	var relative_position: Vector2
 	if not blip:
 		blip = Blip.instance()
 	if blip.bloid and blip.bloid != self:
+		relative_position = to_local(blip.global_position)
 		blip.bloid.blips.erase(blip)
 		blip.get_parent().remove_child(blip)
 	blip.bloid = self
 	$Blips.add_child(blip)
 	blips.append(blip)
+	if relative_position:
+		blip.position = relative_position
 	return blip
 
 func consume_blip(blip: Node2D = null) -> bool:
