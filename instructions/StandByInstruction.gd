@@ -9,7 +9,7 @@ func run():
 		# Values have not yet been set for this action
 		print("Skipping stand by because uninitialized")
 		return false
-	if bloid.blips.size() >= until:
+	if not bloid.space_available(until):
 		# action limit is fulfilled
 		print("Skipping stand by because limit fulfilled")
 		return false

@@ -15,3 +15,11 @@ color = Color( 0.780392, 0.568627, 0.811765, 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BlipBody"]
 shape = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Blip"
+__meta__ = {
+"_edit_use_anchors_": false
+}

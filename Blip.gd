@@ -10,6 +10,8 @@ var bloid: Area2D
 var target: Area2D
 var attached: bool = false
 
+var flip: int = 1
+
 func set_distance(amt: float):
 	angular_velocity *= $BlipBody.position.x
 	$BlipBody.position.x = amt
@@ -52,26 +54,31 @@ func _ready():
 	attach()
 	randomize()
 	orbit += rand_range(0.0, 200.0)
+	flip = 1 if bool(randi() % 2) else -1
 
+func move_in_space(delta: float, trg: Vector2, bounds: float = orbit, ease_in: bool = true) -> bool:
+	var angle = global_position.angle_to_point(trg)
+	var distance = global_position.distance_to(trg)
+	var target_direction = Vector2.LEFT.rotated(angle)
+	if ease_in and distance < bounds + 100:
+		target_direction = Vector2.DOWN.rotated(angle)
+	linear_direction = linear_direction.linear_interpolate(target_direction, 0.01)
+	global_position += linear_direction * (linear_velocity * delta)
+	return distance < bounds
 
 func _process(delta):
-	if path.size() > 0:
+	if path.size() > 0 and path[0].space_available():
+		if attached:
+			detach()
 		if not target:
-			target = path.pop_front()
-		var angle = global_position.angle_to_point(target.global_position)
-		var distance = global_position.distance_to(target.global_position)
-		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
-		global_position += linear_direction * (linear_velocity * delta)
-		if distance < 100:
-			if path.size() == 0:
-				target.add_blip(self)
+			target = path[0]
+		if move_in_space(delta, target.global_position):
+			target.add_blip(self)
+			attach()
 			target = null
+			path.pop_front()
 	elif target:
-		var angle = global_position.angle_to_point(target.global_position)
-		var distance = global_position.distance_to(target.global_position)
-		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
-		global_position += linear_direction * (linear_velocity * delta)
-		if distance < 20:
+		if move_in_space(delta, target.global_position, 20.0, false):
 			print("consumed")
 			queue_free()
 			update()
@@ -79,10 +86,8 @@ func _process(delta):
 		var distance = $BlipBody.global_position.distance_to(get_parent().global_position)
 		if distance > orbit + 10:
 			return detach()
-		rotation += (angular_velocity * delta)
+		rotation += flip * (angular_velocity * delta)
 		if distance < orbit - 10:
 			shift_distance()
 	else:
-		var angle = global_position.angle_to_point(get_parent().global_position)
-		linear_direction = linear_direction.linear_interpolate(Vector2.LEFT.rotated(angle), 0.01)
-		global_position += linear_direction * (linear_velocity * delta)
+		move_in_space(delta, get_parent().global_position)

@@ -10,11 +10,7 @@ func run():
 		# Values have not yet been set for this action
 		print("Skipping move to because uninitialized")
 		return false
-	if target.blips.size() >= target.stats[target.STAT.CAPACITY]:
-		# target bloid is at max capacity
-		print("Skipping move to because max target capacity")
-		return false
-	if target.blips.size() >= until:
+	if not target.space_available(until):
 		# action limit is fulfilled
 		print("Skipping move to because limit fulfilled")
 		return false
@@ -22,7 +18,8 @@ func run():
 		# No blips to perform action
 		print("Skipping move to because no blips")
 		return false
-	bloid.blips[0].path = Dijkstra.shortest_path(bloid.map.bloids, bloid, target)
+	var blip = bloid.blips[0]
+	blip.path = Dijkstra.shortest_path(bloid.map.bloids, bloid, target)
 	print("Moving")
 	return true
 

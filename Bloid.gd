@@ -67,7 +67,7 @@ func _process(delta):
 	action_timer += delta
 	if production_timer > 5.0 - (0.04 * stats[STAT.PRODUCTION]):
 		production_timer = 0.0
-		if claimed and blips.size() < stats[STAT.CAPACITY]:
+		if claimed and space_available():
 			add_blip()
 	if action_timer > 3.0 - (0.025 * stats[STAT.EFFICIENCY]):
 		action_timer = 0.0
@@ -124,15 +124,20 @@ func _position_instructions():
 
 var blips: Array = []
 
+func space_available(until: int = INF) -> bool:
+	return blips.size() < min(stats[STAT.CAPACITY], until)
+
 func add_blip(blip: Node2D = null) -> Node2D:
 	var relative_position: Vector2
 	if not blip:
 		blip = Blip.instance()
-	if blip.bloid and blip.bloid != self:
+	if blip.bloid:
 		relative_position = to_local(blip.global_position)
 		blip.bloid.blips.erase(blip)
-		blip.get_parent().remove_child(blip)
 	blip.bloid = self
+	if blip.get_parent():
+		relative_position = to_local(blip.global_position)
+		blip.get_parent().remove_child(blip)
 	$Blips.add_child(blip)
 	blips.append(blip)
 	if relative_position:
