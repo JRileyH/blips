@@ -1,0 +1,19 @@
+name: Export & Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          ./build/build.sh
+          sshpass -p '${{ secrets.SSH_PASSWORD }}' scp -o "StrictHostKeyChecking no" -r ./build/* root@137.184.206.62:/var/www/blips.sleepy.fish/html
+

@@ -2,5 +2,5 @@
 *~
 .import/
 logs/
-Dist/index.*
-Dist/favicon.*
+build/*
+!build/*.sh
